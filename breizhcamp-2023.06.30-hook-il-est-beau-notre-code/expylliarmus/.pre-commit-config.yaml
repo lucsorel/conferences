@@ -1,0 +1,40 @@
+# ce fichier contient une version du code à ne pas redresser avec les hooks
+exclude: __main__do_not_hook.py
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    # vérifie la syntaxe des fichiers yaml (json, xml, toml, etc.)
+    -   id: check-yaml
+    # supprime les caractères non imprimables de fin de ligne
+    -   id: trailing-whitespace
+    # s'assure que chaque fichier se termine par un retour à la ligne (un seul)
+    -   id: end-of-file-fixer
+
+    # évite de versionner de gros fichiers (>100 ko)
+    -   id: check-added-large-files
+        args: [--maxkb=100]
+
+    # remplace les "guillemets doubles" par des 'guillemets simples', sauf quand "ça n'est pas applicable"
+    -   id: double-quote-string-fixer
+
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        # pour aller chercher la configuration dans pyproject.toml
+        additional_dependencies: [toml]
+
+-   repo: https://github.com/google/yapf
+    rev: v0.40.1
+    hooks:
+    -   id: yapf
+        name: Yapf
+        # pour aller chercher la configuration dans pyproject.toml
+        additional_dependencies: [toml]
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.275
+    hooks:
+      - id: ruff
