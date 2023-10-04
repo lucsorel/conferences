@@ -1,0 +1,24 @@
+= Tweeter, c'est tooter
+
+image::assets/toueeter_c_est_touter.png[]
+
+Un export en pdf du diaporama : link:tweeter_c_est_tooter-Luc_Sorel-Giffo-2023.02.17.pdf[tweeter_c_est_tooter-Luc_Sorel-Giffo-2023.02.17.pdf]
+
+== Visionner le diaporama
+
+La présentation a été écrite pour être visualisée à travers l'extension https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] pour Codium / vsCode.
+
+. affichez la palette de commandes avec `ctrl shift p`
+. utilisez la commande `Asciidoc Slides: Open Slides in Browser`
+
+Documentation de la https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[syntaxe asciidoc pour les présentations].
+
+== Générer un pdf
+
+. utilisez la commande `Asciidoc Slides: Export document as PDF` (ne fonctionne pas toujours)
+
+ou :
+
+. ouvrir la présentation dans le navigateur chromium / chrome
+. rajouter `?print-pdf` à la fin de l'URL
+. lancer l'impression en pdf avec `ctrl p` ou `cmd p`

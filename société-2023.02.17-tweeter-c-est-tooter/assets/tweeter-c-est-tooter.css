@@ -1,0 +1,45 @@
+
+@import url("beige-stylesheet.css");
+
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+    text-transform: none;
+    /* https://www.schemecolor.com/python-logo-colors.php */
+    background: linear-gradient(to right, #4B8BBE, #FFE873 40%);
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    background-size: 100% 2px;
+    text-align: left;
+}
+.reveal h1 {
+    font-size: 2em;
+    background-size: 100% 5px;
+    text-align: center;
+}
+.reveal h2 {
+    font-size: 1.2em;
+}
+.reveal h3 {
+    font-size: 1em;
+    background-size: 100% 1px;
+}
+.reveal pre {
+    width: 100%;
+}
+.reveal table {
+    border: none;
+}
+.reveal table tbody td{
+    vertical-align: middle;
+}
+.medium-text {
+    font-size: 75%;
+}
+.small-text {
+    font-size: 50%;
+}
+.reveal section img {
+    margin: 0;
+}
+/* .slide-content .title {
+    margin-bottom: 10px;
+} */
