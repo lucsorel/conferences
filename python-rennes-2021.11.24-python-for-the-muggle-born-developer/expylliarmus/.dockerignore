@@ -1,0 +1,9 @@
+# exclude everything
+*
+
+# explicit inclusion
+!expylliarmus
+!poetry.lock
+!pyproject.toml
+!poetry.toml
+!start-expylliarmus-server.sh

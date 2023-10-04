@@ -1,0 +1,65 @@
+
+@font-face {
+    font-family: HarryPotter;
+    src: url(HARRYP__.TTF);
+}
+
+@font-face {
+    font-family: Parseltongue;
+    src: url(PARSELTO.TTF);
+}
+
+@font-face {
+    font-family: MagicOwl;
+    src: url(MagicOwlPersonalUse-WyO0O.otf);
+}
+@font-face {
+    font-family: Lumos;
+    src: url(Lumos-JRBj.ttf);
+}
+.harry-potter {
+    font-family: HarryPotter;
+    font-size: 1.2em;
+}
+.parseltongue {
+    font-family: Parseltongue;
+    font-size: 1.2em;
+}
+.magic-owl {
+    font-family: MagicOwl;
+}
+.lumos {
+    font-family: Lumos;
+}
+.reveal {
+    font-family: Lumos;
+}
+.reveal pre {
+    width: 95%;
+}
+.hljs, .language-text {
+    background: navajowhite;
+}
+.reveal pre code {
+    max-height: none;
+}
+.reveal code {
+    color: green;
+    font-size: 0.8em;
+}
+.reveal {
+    font-size: 35px;
+}
+.reveal h1 {
+    font-family: HarryPotter;
+    font-size: 2.5em;
+}
+.reveal h2 {
+    font-family: Parseltongue;
+    text-transform: none;
+}
+
+.reveal section img {
+    border: none;
+    box-shadow: none;
+}

@@ -1,0 +1,18 @@
+.vscode/
+
+# virtual environment
+.venv/
+
+# python bytecode
+__pycache__
+*.py[cod]
+
+# profiling results
+*profiling.html
+*profiling.svg
+*profiling.json
+*profiling.profile
+*profiling.txt
+
+# local folder where books are handled by the web API
+local/

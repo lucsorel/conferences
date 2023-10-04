@@ -1,0 +1,2 @@
+# Minimum line length for functions/classes that require docstrings, shorter ones are exempt.
+docstring-min-length=10
