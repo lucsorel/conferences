@@ -1,0 +1,24 @@
+
+@import url("beige-stylesheet.css");
+
+@font-face {
+    font-family:"jurassic_park";
+    src: url("jurassic_park.ttf") format("truetype");
+}
+.jurassic-title {
+    font-family: "jurassic_park";
+    word-spacing: 400%;
+    letter-spacing: .1rem;
+    font-size: 250%;
+    color: white;
+    background-color: black;
+    border: orange solid 3px;
+    text-shadow: 0 0 4px red;
+    margin: 50px 10px;
+}
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+    font-family: "jurassic_park";
+    font-size: 180%;
+    word-spacing: 150%;
+    letter-spacing: .1rem;
+}

@@ -1,0 +1,49 @@
+= Doc-tracing
+
+== Slideshows
+
+link:2023.06.29-BreizhCamp-doc-tracing_quicky_fr.adoc[2023.06.29-BreizhCamp-doc-tracing_quicky_fr.adoc], _quicky_ given during of the https://www.breizhcamp.org/[BreizhCamp] 2023 edition (Brittany, France, 🇫🇷French contents).
+Pdf version: link:2023.06.29-BreizhCamp-doc-tracing_quicky_fr.pdf[2023.06.29-BreizhCamp-doc-tracing_quicky_fr.pdf].
+Replay of the video: https://www.youtube.com/watch?v=l0HrTE45RVM.
+
+== View the slideshows
+
+The slideshows were designed to be displayed using the https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] extension for Codium / vsCode.
+
+. display the commands with `ctrl shift p`
+. use the `Asciidoc Slides: Open Slides in Browser` command
+
+Documentation about the https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[Asciidoc syntax for slideshows].
+
+== Export as a PDF file
+
+. use the `Asciidoc Slides: Export document as PDF` command (it does not always work)
+
+or :
+
+. open the slideshow with chromium or chrome
+. add `?print-pdf` at the end of the URL
+. print as a PDF with `ctrl p` ou `cmd p`
+
+
+== Code examples
+
+This repository involves code samples (see link:examples[examples] folder) and libraries which generate documentation:
+
+[source,sh]
+----
+# installs the appropriate python version (any 3.10+ should be ok)
+pyenv install $(cat .python-version)
+
+# creates a virtual environment
+python - m venv .venv
+
+# activates the virtual environment
+source .venv/bin/activate
+
+# installs the libraries
+pip install -r requirements.txt
+
+cd examples
+python -m pydoc -p 8080 -b
+----

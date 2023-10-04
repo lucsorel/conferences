@@ -1,0 +1,2 @@
+py2puml==0.7.2
+pydoctrace=0.1.0
