@@ -1,0 +1,12 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Retours d'expérience - intégration continue et déploiement de projets Python
+
+== CI / CD
+
+image::assets/2023.09.26-intégration_continue_déploiement_projets_Python.jpg[width="38%"]
