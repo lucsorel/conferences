@@ -14,8 +14,8 @@ image::assets/2023.09.26-intégration_continue_déploiement_projets_Python.jpg[w
 [.medium-text]
 --
 - Outiller son projet open-source Python avec les _Github actions_ (**Luc Sorel-Giffo**)
-- [...] (**Jean-Luc Tromparent** et **Antoine Coeur-Quetin**)
-- [...] (**Nicolas Ledez**)
+- Utilisation de webhooks pour faire du déploiement continu (**Nicolas Ledez**)
+- Gitlab CI/CD sur un projet python microservice : retour sur 5 ans d’évolutions (**Jean-Luc Tromparent** et **Antoine Coeur-Quetin**)
 --
 
 [.columns]
