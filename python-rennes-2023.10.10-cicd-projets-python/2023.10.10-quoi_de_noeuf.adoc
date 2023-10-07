@@ -62,10 +62,15 @@ image::assets/reptile-python-hatching-egg-820x459.jpg[credits: Heiko Kiera - Shu
 * `f'{strings}'` plus puissantes (-> parseur générique)
 * interpréteur Cpython plus rapide
 * GILs indépendants pour les sous-process
-* typage générique plus élégant (classes, mais aussi fonctions)
+* typage générique plus concis (classes, et fonctions !)
 
 [source,python]
 ----
+class Mapper[K, V]:
+    ...
+
+contact_by_id_mapper = Mapper[str, Contact]()
+
 def first[T](elements: list[T]) -> T:
     return elements[0]
 ----
@@ -80,8 +85,6 @@ Plus d'infos : https://realpython.com/python312-new-features/
 * Pandas 2.x (remplacement progressif de `numpy` par `pyarrows`)
 * https://github.com/pypa/pip-audit[pip-audit] : recherche des vulnérabilités dans le graphe de dépendances
 
-== Outiller son projet open-source Python avec les Github actions
+=== D'autres nouvelles à partager ?
 
-image::http://www.plantuml.com/plantuml/svg/ZL9HQzim47xNhxYz5kh07aqVMaBO36jIiknfb72sBvcO97lIUH3Q_lUT7TMCEaH-qeTqztsVxhxxmEYvimRQq-TMpgnkB6gdFhKUZnQX2rGu9c-friZqXDLlF5A00vf0gZ8OmeVMh3tNPB4MNXI0Gqiv1FQ2gr_Qr9vS3jzqu9-nx5bUD9CDUzVPadmEsh5wkomXSBZFVbZpmEnrsV5KY4_jY0CZwog7icdC7DPb3mP6VESFqV3_ceFhiCTILB3Y97__mvw-a7FYz_373V1AFybmiaVg1pHf_ukcera4Oc0bvy1W1xBtlvsfduMWBxpGxyaWwyPbMp8xcU_0iTmyFcs-5xjYiyxX1bxEmtwJbsBzTRKjTW_hvIg7kzVnQUfmgY0kjn4FAg7fV4NxSKe0ZFv8FDwCAu_UH2GHpPlRsqHwLIeZaICTJvL8mzsh4ANKL6AZOkPwQkQwk2AYvkqiUaa5I1sQXid35tBaaQc6yWIBHMnSBDGzkLhGFm00[py2puml,width="50%"]
-
-https://realpython.com/preview/python-news-september-2023/
+?
