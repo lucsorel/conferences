@@ -9,9 +9,9 @@
 
 == Qui suis-je ?
 
-* dev Python @ PureControl
-* https://github.com/lucsorel[github.com/lucsorel] (doc-as-code, doc-from-code)
-* 🐘 @lucsorelgiffo@floss.social
+* 💙💛 dev Python @ PureControl
+* 🐈‍⬛ https://github.com/lucsorel[github.com/lucsorel] (doc-as-code, doc-from-code)
+* 🐘 https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social]
 
 == Le projet open-source Python
 
@@ -19,9 +19,26 @@ https://github.com/lucsorel/py2puml : génère un diagramme de classes en scanna
 
 image::http://www.plantuml.com/plantuml/svg/ZL9HQzim47xNhxYz5kh07aqVMaBO36jIiknfb72sBvcO97lIUH3Q_lUT7TMCEaH-qeTqztsVxhxxmEYvimRQq-TMpgnkB6gdFhKUZnQX2rGu9c-friZqXDLlF5A00vf0gZ8OmeVMh3tNPB4MNXI0Gqiv1FQ2gr_Qr9vS3jzqu9-nx5bUD9CDUzVPadmEsh5wkomXSBZFVbZpmEnrsV5KY4_jY0CZwog7icdC7DPb3mP6VESFqV3_ceFhiCTILB3Y97__mvw-a7FYz_373V1AFybmiaVg1pHf_ukcera4Oc0bvy1W1xBtlvsfduMWBxpGxyaWwyPbMp8xcU_0iTmyFcs-5xjYiyxX1bxEmtwJbsBzTRKjTW_hvIg7kzVnQUfmgY0kjn4FAg7fV4NxSKe0ZFv8FDwCAu_UH2GHpPlRsqHwLIeZaICTJvL8mzsh4ANKL6AZOkPwQkQwk2AYvkqiUaa5I1sQXid35tBaaQc6yWIBHMnSBDGzkLhGFm00[py2puml,width="45%"]
 
+[.columns]
+=== Syndrôme de Spiderman
+
+[.column]
+--
+**Spiderman**
+
+* 1 piqûre : 😬
+* grimpe aux murs : 💪
+* anime des soirées mousse avec les poignets : 🥳
+
+image::assets/spiderman_got_it_wrong.png[]
+--
+
+[.column]
+--
+--
 
 [.columns]
-=== Spiderman, cet incompris
+=== Syndrôme de Spiderman
 
 [.column]
 --
@@ -44,15 +61,16 @@ image::assets/spiderman_got_it_wrong.png[]
 
 [.medium-text]
 ____
-> De nouvelles responsabilités demandent de nouveaux pouvoirs.
-> -- Luc (du 35) 🕸️
+> **"De nouvelles responsabilités demandent de nouveaux pouvoirs."**
+>
+> Luc (du 35) 🕸️
 ____
 --
 
 === Accueillir et cadrer les contributions
 
-* non-régression
-* homogénéité
+* non-régression des fonctionnalités
+* homogénéité des pratiques
 ** formatage de code
 ** qualité de code
 
@@ -78,7 +96,7 @@ Syntaxe **déclarative** permettant d'exécuter des commandes ou des outils au f
 super-projet/
   ├─ .github/
   │  └─ workflows/
-  │     ├─ {nom_de_workflow}.yml
+  │     ├─ {nom_de_workflow}.yml  # ci.yml, par exemple
   │     └─ ...
 ----
 
