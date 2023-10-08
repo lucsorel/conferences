@@ -1,0 +1,348 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Outiller son projet open-source Python avec les Github actions
+
+== Qui suis-je ?
+
+* 💙💛 dev Python @ PureControl
+* 🐈‍⬛ https://github.com/lucsorel[github.com/lucsorel] (doc-as-code, doc-from-code)
+* 🐘 https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social]
+
+== Le projet open-source Python
+
+https://github.com/lucsorel/py2puml : génère un diagramme de classes en scannant les structures de données de la base de code.
+
+image::http://www.plantuml.com/plantuml/svg/ZL9HQzim47xNhxYz5kh07aqVMaBO36jIiknfb72sBvcO97lIUH3Q_lUT7TMCEaH-qeTqztsVxhxxmEYvimRQq-TMpgnkB6gdFhKUZnQX2rGu9c-friZqXDLlF5A00vf0gZ8OmeVMh3tNPB4MNXI0Gqiv1FQ2gr_Qr9vS3jzqu9-nx5bUD9CDUzVPadmEsh5wkomXSBZFVbZpmEnrsV5KY4_jY0CZwog7icdC7DPb3mP6VESFqV3_ceFhiCTILB3Y97__mvw-a7FYz_373V1AFybmiaVg1pHf_ukcera4Oc0bvy1W1xBtlvsfduMWBxpGxyaWwyPbMp8xcU_0iTmyFcs-5xjYiyxX1bxEmtwJbsBzTRKjTW_hvIg7kzVnQUfmgY0kjn4FAg7fV4NxSKe0ZFv8FDwCAu_UH2GHpPlRsqHwLIeZaICTJvL8mzsh4ANKL6AZOkPwQkQwk2AYvkqiUaa5I1sQXid35tBaaQc6yWIBHMnSBDGzkLhGFm00[py2puml,width="45%"]
+
+[.columns]
+=== Syndrôme de Spiderman
+
+[.column]
+--
+**Spiderman**
+
+* 1 piqûre : 😬
+* grimpe aux murs : 💪
+* anime des soirées mousse avec les poignets : 🥳
+
+image::assets/spiderman_got_it_wrong.png[]
+--
+
+[.column]
+--
+--
+
+[.columns]
+=== Syndrôme de Spiderman
+
+[.column]
+--
+**Spiderman**
+
+* 1 piqûre : 😬
+* grimpe aux murs : 💪
+* anime des soirées mousse avec les poignets : 🥳
+
+image::assets/spiderman_got_it_wrong.png[]
+--
+
+[.column]
+--
+**py2puml**
+
+* 140+ ⭐ : 🥳
+* 37 issues (24 fermées) : 😬
+* 25 PR (21 fermées) : 🥵
+
+[.medium-text]
+____
+> **"De nouvelles responsabilités demandent de nouveaux pouvoirs."**
+>
+> Luc (du 35) 🕸️
+____
+--
+
+=== Accueillir et cadrer les contributions
+
+* non-régression des fonctionnalités
+* homogénéité des pratiques
+** formatage de code
+** qualité de code
+
+=== CONTRIBUTING.md dans le dépôt ?
+
+🗣️ "bla bla bla" -> ❌
+
+Des conventions non outillées finissent dans l'oubli.
+
+=== Intégration continue
+
+* non-régression -> **tests automatisés** (+ couverture de code testé)
+* homogénéité de la base de code
+** formatage de code -> **formateur**
+** qualité de code -> **linter**
+
+== Mise en place des Github actions
+
+Syntaxe **déclarative** permettant d'exécuter des commandes ou des outils au fil du cycle de vie _git_ du projet.
+
+[source,text]
+----
+super-projet/
+  ├─ .github/
+  │  └─ workflows/
+  │     ├─ {nom_de_workflow}.yml  # ci.yml, par exemple
+  │     └─ ...
+----
+
+image::assets/mark_yaml.jpg[width="50%"]
+
+=== Anatomie progressive d'un workflow d'intégration continue Github
+
+Départ : système d'exploitation + checkout du code source
+
+[source,yaml]
+----
+name: Python CI # facultatif
+
+on: push        # évènement(s) git déclencheur(s)
+
+jobs:
+  build:                   # le nom de l'opération
+    runs-on: ubuntu-latest     # système d'exploitation utilisé
+    steps:                     # étapes de l'opération
+      - name: Récupération du code # facultatif
+        uses: actions/checkout@v4  # utilisation d'une recette existante (⚠️ @version)
+----
+
+=== Actions : les recettes de base
+
+* action = brique réutilisable et adaptable à votre besoin
+** chacune a son dépôt
+** configuration décrite dans `action.yaml`
+** parfois accompagnée de scripts référencés dans `action.yaml`
+* 62 actions "officielles" proposées par Github (septembre 2023)
+* nombreuses actions communautaires
+
+[.medium-text]
+Exemples : https://github.com/actions/checkout[github.com/actions/checkout], https://github.com/abatilo/actions-poetry[github.com/abatilo/actions-poetry]
+
+=== Opération de build du projet
+
+[%step]
+. récupérer les sources du projet ✅
+. installer `python`
+. installer `poetry`
+. installer les dépendances
+. lancer les tests automatisés + couverture
+. (et les hooks de `pre-commit` ⁉️)
+
+== Installation de Python - 1/2
+
+Projet utilisant https://github.com/pyenv/pyenv/[pyenv] pour définir la version de `python`.
+
+[source,yaml]
+----
+name: Python CI
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v4            # action officielle
+        with:                                    # configuration pour pyenv
+          python-version-file: '.python-version' # màj transparente de l'IC 👍
+----
+
+=== Installation de Python - 2/2
+
+Configuration alternatives de l'action :
+
+[source,yaml]
+----
+steps:
+  # dernière version disponible (⚠️ varie en fonction du runner)
+  - uses: actions/setup-python@v4
+
+  # version spécifiée en dur 🤷
+  - uses: actions/setup-python@v4
+    with:
+      python-version: '3.9'
+
+  # utilisation de PyPy
+  - uses: actions/setup-python@v4 
+    with:
+      python-version: 'pypy3.9' 
+----
+
+[.medium-text]
+Voir d'https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md[autres cas d'usage avancés] (intervalle ou matrice de versions, caches pour outils spécifiques, etc.).
+
+=== Installation des dépendances 1/2
+
+- utilisation de https://python-poetry.org/docs/[poetry] pour la gestion des dépendances
+- dossier `.venv/` local (à mettre en cache 💡)
+
+[source,yaml]
+----
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # [...]
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2 # action communautaire 🔍
+        with:
+          poetry-version: 1.5.1         # optionnel
+
+      - name: Cache the virtual environment
+        uses: actions/cache@v3          # action officielle
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }} # clé d'éviction sur le lock-file
+
+      - name: Install project dependencies
+        run: poetry install             # exécution explicite d'une commande 🔍
+----
+
+=== Installation des dépendances 2/2
+
+Alternative avec `pip` + `requirements.txt` directement 🙅 :
+
+[source,yaml]
+----
+steps:
+  - uses: actions/setup-python@v4
+    with:
+      python-version: '3.9'
+      cache: 'pip' # utilisation d'un cache pour pip
+
+    - name: Install project dependencies
+      run: pip install -r requirements.txt # pas besoin d'environnement virtuel
+                                           # au sein d'un runner
+----
+
+=== Exécution des tests
+
+[source,yaml]
+----
+env:
+  MIN_CODE_COVERAGE_PERCENT: 93 # 👉 définition d'une variable
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # [...]
+      - name: Run automated tests (with code coverage)
+        run: > # '>' permet de séparer une commande sur plusieurs lignes
+          poetry run pytest -v --cov=py2puml --cov-branch
+            --cov-report term-missing
+            # l'opération sera en échec si le taux de couverture descend sous le seuil
+            --cov-fail-under $MIN_CODE_COVERAGE_PERCENT # utilisation 👈
+----
+
+=== Consultation des exécutions de workflow dans Github
+
+. cliquer sur le menu `Actions` de votre dépôt sur Github
+. cliquer sur une des exécutions de workflow
+
+image::assets/github_actions_run.png[width="75%"]
+
+== Et les hooks de pre-commit ?
+
+L'outil https://pre-commit.com/[pre-commit] utilise les mécanismes de hook de git pour lancer des outils à différentes étapes du cycle de vie git d'un projet.
+
+.Rediffusion : https://www.youtube.com/watch?v=l0HrTE45RVM
+image::assets/hook_il_est_beau_notre_code-breizhcamp_2023.png[width="30%",link="https://www.youtube.com/watch?v=l0HrTE45RVM"]
+
+== Exemple de configuration pre-commit (📄 .pre-commit-config.yaml)
+
+[source,yaml]
+----
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.3.3
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: double-quote-string-fixer
+
+-   repo: https://github.com/google/yapf
+    rev: v0.40.2
+    hooks:
+    -   id: yapf
+        additional_dependencies: [toml]
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.292
+    hooks:
+    -   id: ruff
+----
+
+[.medium-text]
+Voir https://pre-commit.com/hooks.html[pre-commit.com/hooks.html].
+
+=== pre-commit en intégration continue
+
+* à la dure dans le runner Github d'intégration continue
+** installer git 
+** lancer pre-commit
+* intégration avec le service https://pre-commit.ci/[pre-commit.ci]
+
+=== Intégrer pre-commit.ci dans son projet Github 1/6
+
+. aller sur https://pre-commit.ci/
+. s'identifier avec Github
+
+image::assets/01-sign-in_with_github.png[]
+
+=== Intégrer pre-commit.ci dans son projet Github 2/6
+
+- ajouter une installation
+
+image::assets/02-add_an_installation.png[]
+
+=== Intégrer pre-commit.ci dans son projet Github 3/6
+
+- configurer l'intégration
+
+image::assets/03-select_github_account_in_which_pre-commit-ci_will_be_installed.png[]
+
+=== Intégrer pre-commit.ci dans son projet Github 4/6
+
+- confirmer l'accès au compte
+
+image::assets/04-confirm_github_access.png[]
+
+=== Intégrer pre-commit.ci dans son projet Github 5/6
+
+- sélectionner le dépôt de code à intégrer
+
+image::assets/05-select_repository.png[width="55%"]
+
+=== Intégrer pre-commit.ci dans son projet Github 6/6
+
+☝️ Ne se déclenche que dans le cadre d'une pull-request.
+
+image::assets/06-pre-commit_results.png[width="65%"]
+
+== À faire
+
+* projet de démo
+* conclusion
+** système de CI gratuit
+** originalité des actions : briques composables
+** s'adapte à une diversité de projets
+* pour aller plus loin
+** calcul du prochain numéro de version du projet via les messages de commit
+** build et publication de la nouvelle version sur PyPI
