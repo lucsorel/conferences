@@ -69,18 +69,19 @@ ____
 
 === Accueillir et cadrer les contributions
 
+[%step]
 * non-régression des fonctionnalités
 * homogénéité des pratiques
 ** formatage de code
 ** qualité de code
 
-=== CONTRIBUTING.md dans le dépôt ?
+=== 💡 CONTRIBUTING.md dans le dépôt ?
 
 🗣️ "bla bla bla" -> ❌
 
 Des conventions non outillées finissent dans l'oubli.
 
-=== Intégration continue
+=== 💡 Intégration continue
 
 * non-régression -> **tests automatisés** (+ couverture de code testé)
 * homogénéité de la base de code
@@ -127,6 +128,7 @@ Documentation officielle des https://docs.github.com/en/actions/learn-github-act
 
 === Actions : les recettes de base
 
+[%step]
 * action = brique réutilisable et adaptable à votre besoin
 ** chacune a son dépôt
 ** configuration décrite dans `action.yaml`
@@ -137,7 +139,7 @@ Documentation officielle des https://docs.github.com/en/actions/learn-github-act
 [.medium-text]
 Exemples : https://github.com/actions/checkout[github.com/actions/checkout], https://github.com/abatilo/actions-poetry[github.com/abatilo/actions-poetry]
 
-=== Opération de build du projet
+=== Étapes de build du projet
 
 [%step]
 . récupérer les sources du projet ✅
@@ -147,7 +149,7 @@ Exemples : https://github.com/actions/checkout[github.com/actions/checkout], htt
 . lancer les tests automatisés + couverture
 . auditer la qualité du code
 
-== Installation de Python - 1/2
+== Installation de Python - pyenv
 
 Projet utilisant https://github.com/pyenv/pyenv/[pyenv] pour définir la version de `python`.
 
@@ -162,13 +164,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Python
+      - name: Installation de Python
         uses: actions/setup-python@v4            # action officielle
         with:                                    # configuration pour pyenv
           python-version-file: '.python-version' # màj transparente de l'IC 👍
 ----
 
-=== Installation de Python - 2/2
+=== Installation de Python - alternatives
 
 Configuration alternatives de l'action :
 
@@ -192,7 +194,7 @@ steps:
 [.medium-text]
 Voir d'https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md[autres cas d'usage avancés] (intervalle ou matrice de versions, caches pour outils spécifiques, etc.).
 
-=== Installation des dépendances 1/2
+=== Installation des dépendances - poetry
 
 - utilisation de https://python-poetry.org/docs/[poetry] pour la gestion des dépendances
 - dossier `.venv/` local (à mettre en cache 💡)
@@ -204,22 +206,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # [...]
-      - name: Install poetry
+      - name: Installation de poetry
         uses: abatilo/actions-poetry@v2 # action communautaire 🔍
         with:
           poetry-version: 1.5.1         # optionnel
 
-      - name: Cache the virtual environment
+      - name: Mise en cache de l'environnement virtuel
         uses: actions/cache@v3          # action officielle
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }} # clé d'éviction sur le lock-file
 
-      - name: Install project dependencies
+      - name: Installation des dépendances du projet
         run: poetry install             # exécution explicite d'une commande 🔍
 ----
 
-=== Installation des dépendances 2/2
+=== Installation des dépendances - requirements.txt
 
 Alternative avec `pip` + `requirements.txt` directement 🙅 :
 
@@ -231,8 +233,7 @@ steps:
       python-version: '3.9'
       cache: 'pip' # utilisation d'un cache pour pip
 
-    - name: Install project dependencies
-      run: pip install -r requirements.txt # pas besoin d'environnement virtuel
+    - run: pip install -r requirements.txt # pas besoin d'environnement virtuel
                                            # au sein d'un runner
 ----
 
@@ -248,12 +249,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # [...]
-      - name: Run automated tests (with code coverage)
+      - name: Lancement des tests automatisés (avec couverture de code)
         run: > # '>' permet de séparer une commande sur plusieurs lignes
           poetry run pytest -v --cov=py2puml --cov-branch
           --cov-report term-missing
-          # l'opération sera en échec si le taux de couverture descend sous le seuil
           --cov-fail-under $MIN_CODE_COVERAGE_PERCENT # utilisation 👈
+          # l'opération sera en échec si le taux de couverture descend sous le seuil
 ----
 
 === Consultation des exécutions de workflow dans Github
@@ -269,7 +270,7 @@ image::assets/demo.gif[]
 
 == Et les hooks de pre-commit ?
 
-L'outil https://pre-commit.com/[pre-commit] utilise les mécanismes de hook de git pour lancer des outils à différentes étapes du cycle de vie git d'un projet.
+L'outil https://pre-commit.com/[pre-commit] utilise les mécanismes de hook de `git` pour lancer des outils à différentes étapes du cycle de vie `git` du projet.
 
 .Rediffusion : https://www.youtube.com/watch?v=l0HrTE45RVM
 image::assets/hook_il_est_beau_notre_code-breizhcamp_2023.png[width="30%",link="https://www.youtube.com/watch?v=l0HrTE45RVM"]
@@ -280,7 +281,7 @@ image::assets/hook_il_est_beau_notre_code-breizhcamp_2023.png[width="30%",link="
 ----
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.3.3
+    rev: v4.5.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -301,48 +302,51 @@ repos:
 [.medium-text]
 Voir https://pre-commit.com/hooks.html[pre-commit.com/hooks.html].
 
-=== pre-commit en intégration continue
+=== Utiliser pre-commit en intégration continue
 
-* à la dure dans le runner Github d'intégration continue
+__À la dure__ dans le runner Github d'intégration continue
+
 ** installer git 
 ** lancer pre-commit
 
-ou
+Ou via une intégration avec le service https://pre-commit.ci/[pre-commit.ci]
 
-* intégration avec le service https://pre-commit.ci/[pre-commit.ci]
-
-=== Intégrer pre-commit.ci dans son projet Github 1/6
+=== Intégrer pre-commit.ci dans son projet Github 1/5
 
 . aller sur https://pre-commit.ci/
 . s'identifier avec Github
 
 image::assets/01-sign-in_with_github.png[]
 
-=== Intégrer pre-commit.ci dans son projet Github 2/6
+=== Intégrer pre-commit.ci dans son projet Github 2/5
 
 - ajouter une installation
 
 image::assets/02-add_an_installation.png[]
 
-=== Intégrer pre-commit.ci dans son projet Github 3/6
+[.columns]
+=== Intégrer pre-commit.ci dans son projet Github 3/5
 
+[.column]
+--
 - configurer l'intégration
 
 image::assets/03-select_github_account_in_which_pre-commit-ci_will_be_installed.png[]
+--
 
-=== Intégrer pre-commit.ci dans son projet Github 4/6
-
+[.column]
+--
 - confirmer l'accès au compte
 
 image::assets/04-confirm_github_access.png[]
-
-=== Intégrer pre-commit.ci dans son projet Github 5/6
+--
+=== Intégrer pre-commit.ci dans son projet Github 4/5
 
 - sélectionner le dépôt de code à intégrer
 
 image::assets/05-select_repository.png[width="55%"]
 
-=== Intégrer pre-commit.ci dans son projet Github 6/6
+=== Intégrer pre-commit.ci dans son projet Github 5/5
 
 ☝️ Ne se déclenche que dans le cadre d'une pull-request.
 
@@ -386,18 +390,18 @@ main -> PyPI : publication ""$NEW_VERSION""
 
 [.medium-text]
 --
-
-- doc https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs[skip ci]
-- hook https://github.com/alessandrojcm/commitlint-pre-commit-hook[commitlint]
-- doc https://python-semantic-release.readthedocs.io/en/latest/index.html[Python Semantic Release]
-
+Voir : utiliser https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs[skip ci],  hook https://github.com/alessandrojcm/commitlint-pre-commit-hook[commitlint], outil https://python-semantic-release.readthedocs.io/en/latest/index.html[Python Semantic Release]
 --
 
+[.columns]
 == Les Github actions !
 
-image::assets/code_ci_ci_yo.webp[width="50%"]
+[.column]
+--
+image::assets/code_ci_ci_yo.webp[]
+--
 
-[.medium-text]
+[.column]
 --
 * système gratuit de CI / CD
 * YAML déclaratif
@@ -406,6 +410,8 @@ image::assets/code_ci_ci_yo.webp[width="50%"]
 --
 
 === Merci !
+
+💬 🗨️
 
 Des questions ?
 

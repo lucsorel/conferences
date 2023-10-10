@@ -12,11 +12,11 @@ jobs:
       - name: Récupération du code
         uses: actions/checkout@v4
 
-      - name: Installe Python
+      - name: Installation de Python
         uses: actions/setup-python@v4
         with:
           python-version-file: '.python-version'
-      - name: Installe poetry
+      - name: Installation de poetry
         uses: abatilo/actions-poetry@v2
 
       - name: Met en cache l'environnement virtuel
@@ -25,10 +25,10 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
 
-      - name: Installe les dépendances du projet
+      - name: Installation des dépendances du projet
         run: poetry install --without lint
 
-      - name: Lance les tests automatisés (avec couverture de code)
+      - name: Lancement des tests automatisés (avec couverture de code)
         run: >
           poetry run pytest -v --cov=math_cli --cov-branch
           --cov-report term-missing
