@@ -105,11 +105,12 @@ Plus d'infos : https://realpython.com/python312-new-features/
 
 == Résultats de l'enquête 2022 Python developers survey de Jetbrains
 
-* cas métiers : web, données & apprentissage automatique, admin & devops
-* 3.10 __45%__, 3.9 __23%__, 3.8 __17%__
-* encore __7%__ développent avec python 2.x 🫢
-* isolation : virtualenv, Docker, Conda, pipenv, poetry (+ __6%__)
-* framework web : Flask = Django __39%__, FastAPI __25%__
+* cas métiers : web, données & ML, admin & devops
+* 3.10 _45%_, 3.9 _23%_, 3.8 _17%_
+* encore _7%_ développent avec python 2.x 🫢
+* isolation : venv, virtualenv, Conda, poetry, pipenv ... *hatch*
+* dépendances : requirements _69%_ (- 9%), pyproject 33% (+ 7%), poetry.lock _25%_, pipfile.lock _15%_
+* framework web : Flask = Django _39%_, FastAPI _25%_
 * bibliothèques, ORM, bdd, big data, cloud, etc. : https://lp.jetbrains.com/python-developers-survey-2022/[lp.jetbrains.com/python-developers-survey-2022/] 👀
 
 === D'autres nouvelles à partager ?
