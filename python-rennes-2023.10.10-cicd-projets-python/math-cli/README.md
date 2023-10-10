@@ -43,23 +43,30 @@ git config pull.rebase true
 git config mergetool.keepBackup false
 git config core.editor "codium --wait" # optionnel
 
-git remote add origin git@github.com:lucsorel/math_cli.git
+# adapter l'url à votre cas
+git remote add origin git@github.com:lucsorel/math-cli.git
 git branch -M main
 
 # installation des dépendances
 poetry install
 
-# cablage de pre-commit avec les hooks git
+# cablage de pre-commit avec les hooks git, 1re vérification pour installer
 poetry run pre-commit install --hook-type pre-commit --hook-type commit-msg
+poetry run pre-commit run --all-files
 
-# 1er commit (exclure test_math_cli.py)
-git add -A
-git commit -m "feat(math_cli): implement factorial and fibonacci"
+# 1er commit (exclut les actions et test_math_cli.py)
+git add -A -- ':!.github/*' ':!tests/test_math_cli.py'
+git commit -m "feat(math_cli): implement factorial and fibonacci with tests" --no-verify
 git push -u origin main
 
-# 2e commit
-git add test_math_cli.py
-git commit -m "test(math_cli): test the CLI controller"
+# 2e commit : ajout des Github actions
+git add .github
+git commit -m "ci(math_cli): add the CI workflow" --no-verify
+git push
+
+# 3e commit
+git add tests/test_math_cli.py
+git commit -m "test(math_cli): test the CLI controller" --no-verify
 git push
 ```
 

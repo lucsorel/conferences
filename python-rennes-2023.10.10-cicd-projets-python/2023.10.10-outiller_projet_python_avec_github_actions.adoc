@@ -268,6 +268,8 @@ image::assets/github_actions_run.png[width="75%"]
 
 image::assets/demo.gif[]
 
+https://github.com/lucsorel/math-cli[github.com/lucsorel/math-cli]
+
 == Et les hooks de pre-commit ?
 
 L'outil https://pre-commit.com/[pre-commit] utilise les mécanismes de hook de `git` pour lancer des outils à différentes étapes du cycle de vie `git` du projet.
