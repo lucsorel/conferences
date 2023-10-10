@@ -9,8 +9,8 @@
 
 == Qui suis-je ?
 
-* 💙💛 dev Python @ PureControl
-* 🐈‍⬛ https://github.com/lucsorel[github.com/lucsorel] (doc-as-code, doc-from-code)
+* 💙💛 dev Python @ https://www.purecontrol.com[Purecontrol]
+* 🐈‍⬛ https://github.com/lucsorel[github.com/lucsorel] (outils code-to-doc)
 * 🐘 https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social]
 
 == Le projet open-source Python
@@ -120,6 +120,11 @@ jobs:
         uses: actions/checkout@v4  # utilisation d'une recette existante (⚠️ @version)
 ----
 
+[.medium-text]
+--
+Documentation officielle des https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions[Github actions].
+--
+
 === Actions : les recettes de base
 
 * action = brique réutilisable et adaptable à votre besoin
@@ -140,7 +145,7 @@ Exemples : https://github.com/actions/checkout[github.com/actions/checkout], htt
 . installer `poetry`
 . installer les dépendances
 . lancer les tests automatisés + couverture
-. (et les hooks de `pre-commit` ⁉️)
+. auditer la qualité du code
 
 == Installation de Python - 1/2
 
@@ -246,9 +251,9 @@ jobs:
       - name: Run automated tests (with code coverage)
         run: > # '>' permet de séparer une commande sur plusieurs lignes
           poetry run pytest -v --cov=py2puml --cov-branch
-            --cov-report term-missing
-            # l'opération sera en échec si le taux de couverture descend sous le seuil
-            --cov-fail-under $MIN_CODE_COVERAGE_PERCENT # utilisation 👈
+          --cov-report term-missing
+          # l'opération sera en échec si le taux de couverture descend sous le seuil
+          --cov-fail-under $MIN_CODE_COVERAGE_PERCENT # utilisation 👈
 ----
 
 === Consultation des exécutions de workflow dans Github
@@ -257,6 +262,10 @@ jobs:
 . cliquer sur une des exécutions de workflow
 
 image::assets/github_actions_run.png[width="75%"]
+
+=== Démo !
+
+image::assets/demo.gif[]
 
 == Et les hooks de pre-commit ?
 
@@ -297,6 +306,9 @@ Voir https://pre-commit.com/hooks.html[pre-commit.com/hooks.html].
 * à la dure dans le runner Github d'intégration continue
 ** installer git 
 ** lancer pre-commit
+
+ou
+
 * intégration avec le service https://pre-commit.ci/[pre-commit.ci]
 
 === Intégrer pre-commit.ci dans son projet Github 1/6
@@ -336,13 +348,66 @@ image::assets/05-select_repository.png[width="55%"]
 
 image::assets/06-pre-commit_results.png[width="65%"]
 
-== À faire
+== Prochaines étapes
 
-* projet de démo
-* conclusion
-** système de CI gratuit
-** originalité des actions : briques composables
-** s'adapte à une diversité de projets
-* pour aller plus loin
-** calcul du prochain numéro de version du projet via les messages de commit
-** build et publication de la nouvelle version sur PyPI
+[plantuml, target=sequence-diagram, format=svg]
+----
+@startuml ci-semantic-release-publish
+skinparam handwritten true
+
+participant "branche de dev" as feature
+feature -> feature : workflow de build
+note right
+  ""pre-commit"" :
+  - format de message de commit (**commitlint**)
+    (refactor, fix, feat, etc.)
+  - formatage, lint, etc.
+
+  tests automatisés
+end note
+
+feature -> main : fusion PR
+main -> main : workflow de release
+note right
+  montée de version (**python-semantic-release**)
+  - messages de commits -> nouvelle version ""$NEW_VERSION = maj.min.patch""
+  - màj ""pyproject.toml"", ""~__version~__.py"", etc.
+  - ""git commit -m "[skip ci] $NEW_VERSION""" (évite de boucler sur le workflow)
+  - poussée du nouveau tag (ça n'est pas un commit)
+
+  publication
+  - ""poetry ~--build publish ~--repository ...""
+    (le numéro de version dans pyproject.toml est utilisé pour le numéro de version)
+end note
+
+main -> PyPI : publication ""$NEW_VERSION""
+@enduml
+----
+
+[.medium-text]
+--
+
+- doc https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs[skip ci]
+- hook https://github.com/alessandrojcm/commitlint-pre-commit-hook[commitlint]
+- doc https://python-semantic-release.readthedocs.io/en/latest/index.html[Python Semantic Release]
+
+--
+
+== Les Github actions !
+
+image::assets/code_ci_ci_yo.webp[width="50%"]
+
+[.medium-text]
+--
+* système gratuit de CI / CD
+* YAML déclaratif
+* originalité des actions : briques composables
+* s'adapte à une diversité de projets
+--
+
+=== Merci !
+
+Des questions ?
+
+[.medium-text]
+Présentation à retrouver sur https://github.com/lucsorel/conferences/tree/main/python-rennes-2023.10.10-cicd-projets-python[github.com/lucsorel/conferences/tree/main/python-rennes-2023.10.10-cicd-projets-python] 📑
