@@ -1,0 +1,4 @@
+{
+    "GitCommitPlugin.MaxSubjectCharacters": 150,
+    "GitCommitPlugin.ShowEmoji": false
+}

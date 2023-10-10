@@ -1,0 +1,118 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Python Rennes - mardi 10 octobre 2023
+
+== Retours d'expérience - intégration continue et déploiement de projets Python
+
+image::assets/2023.09.26-intégration_continue_déploiement_projets_Python.jpg[width="38%"]
+
+[.medium-text]
+--
+- Outiller son projet open-source Python avec les _Github actions_ (**Luc Sorel-Giffo**)
+- Utilisation de webhooks pour faire du déploiement continu (**Nicolas Ledez**)
+- Gitlab CI/CD sur un projet python microservice : retour sur 5 ans d’évolutions (**Jean-Luc Tromparent** et **Antoine Coeur-Quetin**)
+--
+
+[.small-text]
+--
+Python Rennes - mardi 10 octobre 2023
+--
+
+[.columns]
+== La communauté Python Rennes
+
+[.column]
+--
+[.medium-text]
+Un espace d'échanges "services numériques" qui complète les communautés Python existantes orientées IA.
+
+.Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
+image::assets/python_rennes-communauté.png[communauté Python Rennes]
+--
+
+[.column]
+--
+[.medium-text]
+Rejoignez https://pythonrennes.slack.com[pythonrennes.slack.com] (actualités, entraide, orga).
+
+[.medium-text]
+📣 Suggestions et propositions d'interventions.
+
+.Invitation slack : https://join.slack.com/t/pythonrennes/shared_invite/zt-1yd4yioap-lBAngm3Q0jxAKLP6fYJR8w
+image::assets/qr_code-slack-Python_Rennes.svg[Rejoindre le slack Python Rennes, 50%]
+--
+
+[.column]
+--
+[.medium-text]
+Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRennes[@PythonRennes]
+--
+
+=== Prochainement dans les autres communautés tech rennaises
+
+* mardi 17 octobre
+** https://www.meetup.com/fr-FR/gdg_rennes_android/events/296426566/[GDG Rennes Android] : architecture à plugins avec Koin
+** https://www.meetup.com/fr-FR/software-crafters-rennes/events/296387307/[Craft] et https://www.meetup.com/fr-FR/ecoconception-de-services-numeriques-rennes/events/296509679/[Écoconception] : des portes d'entrée vers le numérique responsable
+* jeudi 19 octobre
+** https://www.meetup.com/fr-FR/RennesJS/events/296555737/[RennesJS] : Utiliser l'App Router Next.js ? / Hotwire : HTML Over The Wire
+
+== Quoi de n'œuf ?
+
+image::assets/reptile-python-hatching-egg-820x459.jpg[credits: Heiko Kiera - Shutterstock - https://www.aboutanimals.com/reptile/, width=50%]
+
+[.medium-text]
+--
+* https://realpython.com/preview/python-news-september-2023/[RealPython news, September 2023]
+* https://pycoders.com/issues/597[PyCoder weekly]
+* communauté
+--
+
+=== Sortie de python 3.12 🥳
+
+* messages d'erreur plus explicites (imports, syntaxe)
+* `f'{strings}'` plus puissantes (-> parseur générique)
+* interpréteur Cpython plus rapide
+* GILs indépendants pour les sous-process
+* typage générique plus concis (classes, et fonctions !)
+
+[source,python]
+----
+class Mapper[K, V]:
+    ...
+
+contact_by_id_mapper = Mapper[str, Contact]()
+
+def first[T](elements: list[T]) -> T:
+    return elements[0]
+----
+
+[.medium-text]
+Plus d'infos : https://realpython.com/python312-new-features/
+
+=== Bibliothèques & frameworks
+
+* arrivée d'un éditeur de code Python dans Excel
+* sortie de Django 5.0 Alpha 1
+* Pandas 2.x (remplacement progressif de `numpy` par `pyarrows`)
+* 1re diffusion de https://www.modular.com/mojo[Mojo] pour Linux
+* https://github.com/ashvardanian/Stringzilla[stringzilla] : manipulation de grosses chaînes de caractères
+* https://github.com/pypa/pip-audit[pip-audit] : recherche des vulnérabilités dans le graphe de dépendances
+
+== Résultats de l'enquête 2022 Python developers survey de Jetbrains
+
+* cas métiers : web, données & ML, admin & devops
+* 3.10 _45%_, 3.9 _23%_, 3.8 _17%_
+* encore _7%_ développent avec python 2.x 🫢
+* isolation : venv, virtualenv, Conda, poetry, pipenv ... *hatch*
+* dépendances : requirements _69%_ (- 9%), pyproject 33% (+ 7%), poetry.lock _25%_, pipfile.lock _15%_
+* framework web : Flask = Django _39%_, FastAPI _25%_
+* bibliothèques, ORM, bdd, big data, cloud, etc. : https://lp.jetbrains.com/python-developers-survey-2022/[lp.jetbrains.com/python-developers-survey-2022/] 👀
+
+=== D'autres nouvelles à partager ?
+
+?
