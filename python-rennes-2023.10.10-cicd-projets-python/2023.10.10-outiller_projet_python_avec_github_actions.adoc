@@ -362,6 +362,8 @@ skinparam handwritten true
 participant "branche de dev" as feature
 feature -> feature : workflow de build
 note right
+  vulnérabilités des dépendances (""pip-audit"")
+
   ""pre-commit"" :
   - format de message de commit (**commitlint**)
     (refactor, fix, feat, etc.)
@@ -390,7 +392,7 @@ main -> PyPI : publication ""$NEW_VERSION""
 
 [.medium-text]
 --
-Voir : utiliser https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs[skip ci],  hook https://github.com/alessandrojcm/commitlint-pre-commit-hook[commitlint], outil https://python-semantic-release.readthedocs.io/en/latest/index.html[Python Semantic Release]
+Voir : https://github.com/pypa/pip-audit[pip-audit], utiliser https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs[skip ci],  hook https://github.com/alessandrojcm/commitlint-pre-commit-hook[commitlint], outil https://python-semantic-release.readthedocs.io/en/latest/index.html[Python Semantic Release]
 --
 
 [.columns]
