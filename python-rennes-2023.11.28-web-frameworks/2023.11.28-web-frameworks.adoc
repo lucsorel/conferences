@@ -1,0 +1,117 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Python Rennes - mardi 28 novembre 2023
+
+== Retours d'expérience - interfaces graphiques web en Python
+
+image::assets/2023.11.28-frameworks_web_python.webp[width="60%"]
+
+[.medium-text]
+--
+- *Streamlit* : créer des applications web interactives avec simplicité (**Bruno Queguiner**)
+- Une webapp 100% Python avec *NiceGUI*, c'est possible ? (**Gaël Durand**)
+- Fête des démos avec *Gradio* ! (**Fabien Ric**)
+--
+
+[.small-text]
+--
+Python Rennes - mardi 28 novembre 2023
+--
+
+== Quoi de n'œuf ?
+
+image::assets/reptile-python-hatching-egg-820x459.jpg[credits: Heiko Kiera - Shutterstock - https://www.aboutanimals.com/reptile/, width=50%]
+
+Canal https://app.slack.com/client/T049W7K3GDA/C049TNM0G8K[#quoi-de-noeuf]
+
+=== Gestion de projet Python
+
+* An unbiased evaluation of environment management and packaging tools
+** Interpreter version, package & environment management
+** Package building & publishing
+** https://youtu.be/3-drZY3u5vo
+** @luc
+
+* Everything about TOML format
+** https://youtu.be/n9mGk8_tQtM
+** @michel
+
+=== Apprendre
+
+* Anthony writes code - *Python programming* and related topics
+** chaîne https://www.youtube.com/@anthonywritescode
+** vidéos : https://github.com/anthonywritescode/explains
+** @luc
+
+* Books on microservices and Python
+** https://www.humblebundle.com/books/microservices-packt-books
+** @nicolas
+
+=== Développer 1 / 2
+
+[.medium-text]
+--
+* PePy - Statistics of a library
+** https://www.pepy.tech
+** Reminder
+*** Statistics: https://www.piptrends.com
+*** Compare 2 versions of a package: https://diffify.com/python
+** @luc
+
+* Ruff (linter and formatter)
+** In beta, production ready
+** https://astral.sh/blog/the-ruff-formatter
+** @michel
+--
+
+=== Développer 2 / 2
+
+[.medium-text]
+--
+* Radon - Various code metrics for Python code
+** https://github.com/rubik/radon
+** @david
+
+* Four Kinds of Optimisation
+** Algorithm, data-structures, lower-level system, approximate solution (precision, probabilistic)
+** https://tratt.net/laurie/blog/2023/four_kinds_of_optimisation.html
+** @luc
+--
+
+=== Développer sur iOS
+
+* PEP 730 - Adding iOS as a supported platform
+** https://peps.python.org/pep-0730/
+** Starting on Python 3.13
+** @michel
+
+* a-Shell - A text-based user interface for a screen-based platform
+** https://holzschu.github.io/a-Shell_iOS/
+
+
+=== Manipulation de données
+
+* Pypipe
+** Data processing from the command line
+** https://github.com/bugen/pypipe
+** @michel
+
+=== Conférences Python
+
+* Who Run The Tech - https://whorunthetech.com/
+** 2023-11-30 Chambre de Métiers et de l’Artisanat à Rennes @Rennes
+*** Nailya Bogrova : “Qu'est-ce que la structure des virus informatiques et quels sont les outils d'analyse des fichiers ?”
+*** Bérengère Mathieu : “Python Il buono, il brutto, il cattivo”
+
+* Global PyLadies Conference - https://conference.pyladies.com/
+** 1-3 décembre 2023
+** en ligne
+
+== Un conseil avant de commencer...
+
+video::assets/ouvrez_toute_grandes_vos_oreilles_on_va_faire_un_peu_de_petard.mp4[]
