@@ -1,4 +1,5 @@
 {
     "GitCommitPlugin.MaxSubjectCharacters": 150,
-    "GitCommitPlugin.ShowEmoji": false
+    "GitCommitPlugin.ShowEmoji": false,
+    "asciidoc.antora.enableAntoraSupport": false
 }

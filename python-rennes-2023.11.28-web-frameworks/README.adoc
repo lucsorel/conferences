@@ -1,0 +1,13 @@
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
+video::yspHNEFjKfQ[youtube,width=480,height=360]
+
+== Actualités
+
+link:2023.11.28-web-frameworks.adoc[2023.11.28-web-frameworks.adoc] (version link:2023.11.28-web-frameworks.pdf[pdf]).
+
+== Conférences
+
+. Streamlit (Bruno Queguiner). Diaporama : link:2023.11.28-Bruno_Queguiner-Python_Rennes-Streamlit.pdf[2023.11.28-Bruno_Queguiner-Python_Rennes-Streamlit.pdf] ; code source : link:hello_world.py[hello_world.py], link:widgets.py[widgets.py]
+. NiceGUI (Gaël Durand). Diaporama : link:2023.11.28-Gaël_Durand-Python_Rennes-NiceGUI.pdf[2023.11.28-Gaël_Durand-Python_Rennes-NiceGUI.pdf]
+. GradIO (Fabien Ric). Diaporama : link:2023.11.28-Fabien_Ric-Python_Rennes-Gradio.pdf[2023.11.28-Fabien_Ric-Python_Rennes-Gradio.pdf]
