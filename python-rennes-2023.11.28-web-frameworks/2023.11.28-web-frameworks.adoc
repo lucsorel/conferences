@@ -23,11 +23,28 @@ image::assets/2023.11.28-frameworks_web_python.webp[width="60%"]
 Python Rennes - mardi 28 novembre 2023
 --
 
+== Rediffusion des présentations
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
+video::yspHNEFjKfQ[youtube,width=480,height=360]
+
+[.medium-text]
+--
+. Streamlit (Bruno Queguiner). Diaporama : link:2023.11.28-Bruno_Queguiner-Python_Rennes-Streamlit.pdf[2023.11.28-Bruno_Queguiner-Python_Rennes-Streamlit.pdf] ; code source : link:hello_world.py[hello_world.py], link:widgets.py[widgets.py]
+. NiceGUI (Gaël Durand). Diaporama : link:2023.11.28-Gaël_Durand-Python_Rennes-NiceGUI.pdf[2023.11.28-Gaël_Durand-Python_Rennes-NiceGUI.pdf]
+. GradIO (Fabien Ric). Diaporama : link:2023.11.28-Fabien_Ric-Python_Rennes-Gradio.pdf[2023.11.28-Fabien_Ric-Python_Rennes-Gradio.pdf]
+--
+
 == Quoi de n'œuf ?
 
 image::assets/reptile-python-hatching-egg-820x459.jpg[credits: Heiko Kiera - Shutterstock - https://www.aboutanimals.com/reptile/, width=50%]
 
 Canal https://app.slack.com/client/T049W7K3GDA/C049TNM0G8K[#quoi-de-noeuf]
+
+[.small-text]
+--
+Merci Michel Caradec pour la compilation 🙏
+--
 
 === Gestion de projet Python
 
@@ -114,4 +131,4 @@ Canal https://app.slack.com/client/T049W7K3GDA/C049TNM0G8K[#quoi-de-noeuf]
 
 == Un conseil avant de commencer...
 
-video::assets/ouvrez_toute_grandes_vos_oreilles_on_va_faire_un_peu_de_petard.mp4[]
+video::assets/ouvrez_toutes_grandes_vos_oreilles_on_va_faire_un_peu_de_petard.mp4[title="Ouvrez toutes grandes vos oreilles, on va faire un peu d'pétard."]
