@@ -1,0 +1,13 @@
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
+video::yspHNEFjKfQ[youtube,width=480,height=360]
+
+== Actualités
+
+link:2023.11.28-type-plugin-match.adoc[2023.11.28-type-plugin-match.adoc] (version link:2023.11.28-type-plugin-match.pdf[pdf]).
+
+== Conférences
+
+. Introduction aux type hints (Michel Caradec). Diaporama : link:.pdf[.pdf]
+. Implémenter un système de plugins en Python (Florian Strzelecki). Diaporama : link:.pdf[.pdf]
+. Faites un bon match avec Python (David Blanchet). Diaporama : link:.pdf[.pdf]
