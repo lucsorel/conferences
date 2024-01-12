@@ -23,17 +23,17 @@ image::assets/python-rennes-2024.01.11-type-plugin-match.webp[width="60%"]
 Python Rennes - jeudi 11 janvier 2024
 --
 
-// == Rediffusion des présentations
+=== Rediffusion des présentations
 
 // .Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
 // video::yspHNEFjKfQ[youtube,width=480,height=360]
 
-// [.medium-text]
-// --
-// . Introduction aux type hints (Michel Caradec). Diaporama : link:.pdf[.pdf]
+[.medium-text]
+--
+. Introduction aux type hints (Michel Caradec). Projet et présentation sur ce dépôt gitlab : https://gitlab.com/reech-oss/meetup/meetup-python-rennes-typing[reech-oss/meetup/meetup-python-rennes-typing]
 // . Implémenter un système de plugins en Python (Florian Strzelecki). Diaporama : link:.pdf[.pdf]
 // . Faites un bon match avec Python (David Blanchet). Diaporama : link:.pdf[.pdf]
-// --
+--
 
 [.columns]
 == La communauté Python Rennes
