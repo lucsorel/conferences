@@ -25,14 +25,14 @@ Python Rennes - jeudi 11 janvier 2024
 
 === Rediffusion des présentations
 
-// .Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
-// video::yspHNEFjKfQ[youtube,width=480,height=360]
+.Rediffusion vidéo : https://www.youtube.com/watch?v=qAS-zj0irEM
+video::qAS-zj0irEM[youtube,width=480,height=360]
 
 [.medium-text]
 --
 . Introduction aux type hints (Michel Caradec). Projet et présentation sur ce dépôt gitlab : https://gitlab.com/reech-oss/meetup/meetup-python-rennes-typing[reech-oss/meetup/meetup-python-rennes-typing]
-. Implémenter un système de plugins en Python (Florian Strzelecki). Diaporama : link:2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf[2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf]
-// . Faites un bon match avec Python (David Blanchet). Diaporama : link:.pdf[.pdf]
+. Implémenter un système de plugins en Python (Florian Strzelecki) : link:2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf[diaporama PDF]
+. Faites un bon match avec Python (David Blanchet) : link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python.pdf[diaporama PDF], link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python-avec_notes_de_présentation.pdf[diaporama PDF avec notes de présentation]
 --
 
 [.columns]

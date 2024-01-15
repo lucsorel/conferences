@@ -1,6 +1,6 @@
 
-.Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
-video::yspHNEFjKfQ[youtube,width=480,height=360]
+.Rediffusion vidéo : https://www.youtube.com/watch?v=qAS-zj0irEM
+video::qAS-zj0irEM[youtube,width=480,height=360]
 
 == Actualités
 
@@ -10,4 +10,4 @@ link:2024.01.11-type-plugin-match.adoc[2024.01.11-type-plugin-match.adoc] (versi
 
 . Introduction aux type hints (Michel Caradec). Dépôt gitlab de la présentation et du code démontré : https://gitlab.com/reech-oss/meetup/meetup-python-rennes-typing[reech-oss/meetup/meetup-python-rennes-typing]
 . Implémenter un système de plugins en Python (Florian Strzelecki). Diaporama : link:2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf[2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf]
-. Faites un bon match avec Python (David Blanchet). Diaporama : link:.pdf[.pdf]
+. Faites un bon match avec Python (David Blanchet). Diaporama : link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python.pdf[2024.01.11-python-rennes-Faites_un_bon_match_avec_Python.pdf], avec notes de présentation : link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python-avec_notes_de_présentation.pdf[2024.01.11-python-rennes-Faites_un_bon_match_avec_Python-avec_notes_de_présentation.pdf]
