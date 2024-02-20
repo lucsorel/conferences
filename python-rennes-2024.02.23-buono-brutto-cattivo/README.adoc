@@ -1,0 +1,23 @@
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=XXX
+video::XXX[youtube,width=480,height=360]
+
+== Actualités
+
+link:2024.02.23-buono-brutto-cattivo.adoc[2024.02.23-buono-brutto-cattivo.adoc] (version link:2024.02.23-buono-brutto-cattivo.pdf[pdf]).
+
+Ce diaporama d'actualités a été conçu pour être présenté dans un navigateur grâce à l'extension https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] pour Codium / vsCode.
+
+. ouvrez le fichier `.adoc` dans Codium / vsCode
+. affichez l'invite commandes avec `ctrl shift p`
+. sélectionnez la commande `Asciidoc Slides: Open Slides in Browser`
+
+Pour exporter le diaporama en pdf :
+
+. ouvrez le diaporama dans Chromium ou Chrome
+. ajouter `?print-pdf` à la fin de l'URL du diaporama dans le navigateur
+. imprimez le document en PDF avec `ctrl p` ou `cmd p`
+
+== Conférences
+
+. Python : il buono, il brutto, il cattivo (Bérengère Mathieu & Arielle Livis).

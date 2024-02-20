@@ -1,0 +1,170 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Python Rennes - vendredi 23 février 2024
+
+== Python : il buono, il brutto, il cattivo
+
+image::assets/2024.02.23-python-il-buono-il-brutto-il-cattivo.webp[width="60%"]
+
+Par **Bérengère Mathieu** & **Arielle Livis**
+
+[.small-text]
+--
+Python Rennes - vendredi 23 février 2024
+--
+
+// === Rediffusion des présentations
+
+// .Rediffusion vidéo : https://www.youtube.com/watch?v=XXX
+// video::XXX[youtube,width=480,height=360]
+
+// [.medium-text]
+// --
+// . Introduction aux type hints (Michel Caradec). Projet et présentation sur ce dépôt gitlab : https://gitlab.com/reech-oss/meetup/meetup-python-rennes-typing[reech-oss/meetup/meetup-python-rennes-typing]
+// . Implémenter un système de plugins en Python (Florian Strzelecki) : link:2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf[diaporama PDF]
+// . Faites un bon match avec Python (David Blanchet) : link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python.pdf[diaporama PDF], link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python-avec_notes_de_présentation.pdf[diaporama PDF avec notes de présentation]
+// --
+
+
+== Jérôme Armbruster, décédé le 19 janvier 2024
+
+.crédit photo : David Ferrière, HelloWork
+image::assets/jerome_armbruster-source_david_ferriere-hellowork.jpg[Jérôme Armbruster, 50%]
+
+[.medium-text]
+💙💛 pensées de soutien à sa famille, ses proches et ses collègues de HelloWork.
+
+[.columns]
+== La communauté Python Rennes
+
+[.column]
+--
+[.medium-text]
+Communauté "services numériques" complétant les communautés datascience existantes.
+
+[.medium-text]
+329 membres 🎉
+
+.Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
+image::assets/python_rennes-communauté.png[communauté Python Rennes]
+--
+
+[.column]
+--
+[.medium-text]
+Rejoignez https://pythonrennes.slack.com[pythonrennes.slack.com] (actualités, entraide, orga).
+
+[.medium-text]
+61 membres
+
+.Invitation slack : https://join.slack.com/t/pythonrennes/shared_invite/zt-1yd4yioap-lBAngm3Q0jxAKLP6fYJR8w
+image::assets/qr_code-slack-Python_Rennes.svg[Rejoindre le slack Python Rennes, 50%]
+--
+
+[.column]
+--
+[.medium-text]
+Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRennes[@PythonRennes]
+
+[.medium-text]
+79 abonné·es
+--
+
+== Quoi de n'œuf ?
+
+image::assets/reptile-python-hatching-egg-820x459.jpg[credits: Heiko Kiera - Shutterstock - https://www.aboutanimals.com/reptile/, width=50%]
+
+Canal https://app.slack.com/client/T049W7K3GDA/C049TNM0G8K[#quoi-de-noeuf]
+
+[.small-text]
+--
+* https://til.simonwillison.net/python/stdlib-cli-tools
+--
+
+
+[.columns]
+=== Astral-sh : succès et déception
+
+[.column]
+--
+https://astral.sh/[Astral-sh]
+
+_"Next-gen Python tooling"_
+
+[.medium-text]
+Réimplémentation++ en `rust` d'outils existants :
+
+[.medium-text]
+* `ruff` (linter) : `pylint`, `flake8`
+* `ruff-formatter` : `black`
+* `uv` :
+** `pip`, `pip-tools`, `virtualenv`
+** reprend `Rye` : version de `python`
+--
+
+[.column]
+--
+.https://www.youtube.com/@anthonywritescode[@anthonywritescode] my thoughts on ruff : https://www.youtube.com/watch?v=XzW4-KEB664
+video::XzW4-KEB664[youtube,width=480,height=260]
+
+[.medium-text]
+* `ruff` s'inspire de 15+ années de R&D de projets open-source
+* enterre les projets originels sans y contribuer
+--
+
+[.columns]
+=== `Result` : la monade venue de Rust pour gérer les erreurs
+
+[.column]
+--
+[.medium-text]
+Avant :
+
+[source,python]
+----
+def get_user_by_email(email) -> User:
+  if not user_exists(email):
+    raise ValueError('User does not exist')
+  if is_inactive(email):
+    raise ValueError(User is inactive)
+  return get_user(email)
+
+try:
+  user = get_user_by_email('em@il')
+except ValueError as ve:
+  raise UserError(str(ve))
+else:
+  handle_user(user)
+----
+--
+
+[.column]
+--
+[.medium-text]
+Avec https://github.com/rustedpy/result[github.com/rustedpy/result] :
+
+[source,python]
+----
+def get_user_by_email(email) -> Result[User, str]:
+  if not user_exists(email):
+    return Err('User does not exist')
+  if is_inactive(email):
+    return Err('User is inactive')
+  return Ok(get_user(email))
+
+match get_user_by_email('em@il'):
+  case Ok(user):
+    handle_user(user)
+  case Err(message):
+    raise UserError(message)
+----
+
+.Voir https://youtu.be/qAS-zj0irEM?t=5765 Pattern matching (David Blanchet)
+video::qAS-zj0irEM?t=5765[youtube,width=240,height=130]
+--
+
