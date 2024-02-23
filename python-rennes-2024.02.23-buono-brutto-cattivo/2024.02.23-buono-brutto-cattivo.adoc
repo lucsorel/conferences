@@ -4,6 +4,8 @@
 :source-highlighter: highlightjs
 :icons: font
 :toc:
+// use {dunder}
+:dunder: __
 
 = Python Rennes - vendredi 23 février 2024
 
@@ -25,9 +27,7 @@ Python Rennes - vendredi 23 février 2024
 
 // [.medium-text]
 // --
-// . Introduction aux type hints (Michel Caradec). Projet et présentation sur ce dépôt gitlab : https://gitlab.com/reech-oss/meetup/meetup-python-rennes-typing[reech-oss/meetup/meetup-python-rennes-typing]
-// . Implémenter un système de plugins en Python (Florian Strzelecki) : link:2024.01.11-python-rennes-architecture_plugins-Florian_Strzelecki.pdf[diaporama PDF]
-// . Faites un bon match avec Python (David Blanchet) : link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python.pdf[diaporama PDF], link:2024.01.11-python-rennes-Faites_un_bon_match_avec_Python-avec_notes_de_présentation.pdf[diaporama PDF avec notes de présentation]
+// . Python : il buono, il brutto, il cattivo (Bérengère Mathieu & Arielle Livis) : TODO
 // --
 
 
@@ -48,7 +48,7 @@ image::assets/jerome_armbruster-source_david_ferriere-hellowork.jpg[Jérôme Arm
 Communauté "services numériques" complétant les communautés datascience existantes.
 
 [.medium-text]
-329 membres 🎉
+330 membres 🎉
 
 .Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
 image::assets/python_rennes-communauté.png[communauté Python Rennes]
@@ -102,7 +102,7 @@ Réimplémentation++ en `rust` d'outils existants :
 [.medium-text]
 * `ruff` (linter) : `pylint`, `flake8`
 * `ruff-formatter` : `black`
-* `uv` :
+* `uv` (voir l'annonce annonce : https://astral.sh/blog/uv[astral.sh/blog/uv]) :
 ** `pip`, `pip-tools`, `virtualenv`
 ** reprend `Rye` : version de `python`
 --
@@ -168,3 +168,79 @@ match get_user_by_email('em@il'):
 video::qAS-zj0irEM?t=5765[youtube,width=240,height=130]
 --
 
+=== Pytest
+
+* sortie de la version 8 🎉 : https://pythontest.com/pytest/pytest-8-is-here/
+** coloration syntaxique des échantillons de code Python
+** coloration syntaxique des diffs en mode `-vv`
+** meilleur présentation des erreurs d'assertions pour les comparateurs !=, `<`=, `>`=, `<`, et `>`
+
+* parallélisation des tests automatisés dans la CI Github : https://guicommits.com/parallelize-pytest-tests-github-actions/
+
+=== Les CLI de la bibliothèque standard
+
+https://til.simonwillison.net/python/stdlib-cli-tools
+
+-> recherche de blocs `if {dunder}name{dunder} == '{dunder}main{dunder}'`
+
+Que font les CLI suivantes ?
+
+[%step]
+. python -m http.server
+. python -m gzip --decompress archive.gz
+. python3.11 -m site
+. python -m asyncio
+. echo '{"foo": "bar", "baz": [1, 2, 3]}' | python -m json.tool
+. python -m calendar
+
+[.notes]
+--
+. python -m http.server : expose le dossier courant dans un serveur web
+. python -m gzip --decompress archive.gz : décompresse une archive
+. python3.11 -m site : informations sur l'installation de Python
+. python -m asyncio : lance une REPL avec await utilisable dès le début et await
+. echo '{"foo": "bar", "baz": [1, 2, 3]}' | python -m json.tool : pretty-print
+. python -m calendar : affiche le calendrier de l'année en cours en mode texte
+--
+
+=== Protocoles et classes abstraites
+
+https://pybit.es/articles/typing-protocol-abc-alternative/[pybit.es/articles/typing-protocol-abc-alternative/] :
+
+* protocoles
+* classes abstraites
+
+.Voir https://youtu.be/qAS-zj0irEM?t=680 Typage (Michel Caradec)
+video::qAS-zj0irEM?t=680[youtube,width=480,height=260]
+
+=== Articles et projets 1/2
+
+[%step]
+[.medium-text]
+* https://www.syntaxerror.tech/syntax-error-11-debugging-python/[www.syntaxerror.tech/syntax-error-11-debugging-python/] : outils et pratiques de debug
+* les pièges des dates en Python (https://dev.arie.bovenberg.net/blog/python-datetime-pitfalls/[dev.arie.bovenberg.net/blog/python-datetime-pitfalls/])
+** bibliothèque pour les résoudre : https://github.com/ariebovenberg/whenever[github.com/ariebovenberg/whenever]
+* https://github.com/Klavionik/copykitten[github.com/Klavionik/copykitten] : échanger avec le presse-papier
+* https://github.com/mangiucugna/json_repair[github.com/mangiucugna/json_repair] : réparation de fichiers JSON mal formattés
+* détection de types de fichier :
+** https://github.com/cdgriffith/puremagic[] : entêtes de fichier ouvertes en mode texte
+** https://tika.apache.org/[] : utilisé lors des Panama papers
+** https://github.com/google/magika[] : heuristique de machine learning
+* https://www.nicholashairs.com/posts/major-changes-between-python-versions/[www.nicholashairs.com/posts/major-changes-between-python-versions]
+
+=== Articles et projets 2/2
+
+[%step]
+[.medium-text]
+* https://marimo.io/[marimo.io] : alternative aux notebooks Jupyter sans markdown
+* https://pypi.org/project/toolz/[pypi.org/project/toolz/] : pipeline de traitement de données
+* https://ashishb.net/all/using-python-poetry-inside-docker/[ashishb.net/all/using-python-poetry-inside-docker/] : Dockerfile et poetry
+* https://github.com/autometrics-dev/autometrics-py[github.com/autometrics-dev/autometrics-py] : métriques métier avec Prometheus et OpenTelemetry
+* https://medium.com/ambient-innovation/implementing-a-lasting-service-pattern-for-your-business-logic-96d6aaf7bdf4[medium.com/ambient-innovation/implementing-a-lasting-service-pattern-for-your-business-logic-96d6aaf7bdf4] : conseils ou de bonnes pratiques d'architecture de code
+* https://www.youtube.com/watch?v=knMg6G9_XCg[www.youtube.com/watch?v=knMg6G9_XCg] : Trey Hunner (PythonMorsels) Readability Counts - PyCon 2017
+
+== Et maintenant...
+
+> Si on travaille pour gagner sa vie, pourquoi se tuer au travail ?
+
+Bérengère et Arielle vont nous aider en ce sens 🙂🙏
