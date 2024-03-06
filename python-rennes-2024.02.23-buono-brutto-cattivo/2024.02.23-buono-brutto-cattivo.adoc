@@ -1,0 +1,229 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+// use {dunder}
+:dunder: __
+
+= Python Rennes - vendredi 23 février 2024
+
+== Python : il buono, il brutto, il cattivo
+
+image::assets/2024.02.23-python-il-buono-il-brutto-il-cattivo.webp[width="60%"]
+
+Par **Bérengère Mathieu** & **Arielle Livis**
+
+[.small-text]
+--
+Python Rennes - vendredi 23 février 2024
+--
+
+== Jérôme Armbruster, décédé le 19 janvier 2024
+
+.crédit photo : David Ferrière, HelloWork
+image::assets/jerome_armbruster-source_david_ferriere-hellowork.jpg[Jérôme Armbruster, 50%]
+
+[.medium-text]
+💙💛 pensées de soutien à sa famille, ses proches et ses collègues de HelloWork.
+
+[.columns]
+== La communauté Python Rennes
+
+[.column]
+--
+[.medium-text]
+Communauté "services numériques" complétant les communautés datascience existantes.
+
+[.medium-text]
+330 membres 🎉
+
+.Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
+image::assets/python_rennes-communauté.png[communauté Python Rennes]
+--
+
+[.column]
+--
+[.medium-text]
+Rejoignez https://pythonrennes.slack.com[pythonrennes.slack.com] (actualités, entraide, orga).
+
+[.medium-text]
+62 membres
+
+.Invitation slack : https://join.slack.com/t/pythonrennes/shared_invite/zt-1yd4yioap-lBAngm3Q0jxAKLP6fYJR8w
+image::assets/qr_code-slack-Python_Rennes.svg[Rejoindre le slack Python Rennes, 50%]
+--
+
+[.column]
+--
+[.medium-text]
+Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRennes[@PythonRennes]
+
+[.medium-text]
+79 abonné·es
+--
+
+== Quoi de n'œuf ?
+
+image::assets/reptile-python-hatching-egg-820x459.jpg[credits: Heiko Kiera - Shutterstock - https://www.aboutanimals.com/reptile/, width=50%]
+
+Canal https://app.slack.com/client/T049W7K3GDA/C049TNM0G8K[#quoi-de-noeuf]
+
+[.columns]
+=== Astral-sh : succès et déception
+
+[.column]
+--
+https://astral.sh/[Astral-sh]
+
+_"Next-gen Python tooling"_
+
+[.medium-text]
+Réimplémentation++ en `rust` d'outils existants :
+
+[.medium-text]
+* `ruff` (linter) : `pylint`, `flake8`
+* `ruff-formatter` : `black`
+* `uv` (voir l'annonce annonce : https://astral.sh/blog/uv[astral.sh/blog/uv]) :
+** `pip`, `pip-tools`, `virtualenv`
+** reprend `Rye` : version de `python`
+--
+
+[.column]
+--
+.https://www.youtube.com/@anthonywritescode[@anthonywritescode] my thoughts on ruff : https://www.youtube.com/watch?v=XzW4-KEB664
+video::XzW4-KEB664[youtube,width=480,height=260]
+
+[.medium-text]
+* `ruff` s'inspire de 15+ années de R&D de projets open-source
+* enterre les projets originels sans y contribuer
+--
+
+[.columns]
+=== `Result` : la monade venue de Rust pour gérer les erreurs
+
+[.column]
+--
+[.medium-text]
+Avant :
+
+[source,python]
+----
+def get_user_by_email(email) -> User:
+  if not user_exists(email):
+    raise ValueError('User does not exist')
+  if is_inactive(email):
+    raise ValueError('User is inactive')
+  return get_user(email)
+
+try:
+  user = get_user_by_email('em@il')
+except ValueError as ve:
+  raise UserError(str(ve))
+else:
+  handle_user(user)
+----
+--
+
+[.column]
+--
+[.medium-text]
+Avec https://github.com/rustedpy/result[github.com/rustedpy/result] :
+
+[source,python]
+----
+def get_user_by_email(email) -> Result[User, str]:
+  if not user_exists(email):
+    return Err('User does not exist')
+  if is_inactive(email):
+    return Err('User is inactive')
+  return Ok(get_user(email))
+
+match get_user_by_email('em@il'):
+  case Ok(user):
+    handle_user(user)
+  case Err(message):
+    raise UserError(message)
+----
+
+.Voir https://youtu.be/qAS-zj0irEM?t=5765 Pattern matching (David Blanchet)
+video::qAS-zj0irEM?t=5765[youtube,width=240,height=130]
+--
+
+=== Pytest
+
+* sortie de la version 8 🎉 : https://pythontest.com/pytest/pytest-8-is-here/
+** coloration syntaxique des échantillons de code Python
+** coloration syntaxique des diffs en mode `-vv`
+** meilleur présentation des erreurs d'assertions pour les comparateurs !=, `<`=, `>`=, `<`, et `>`
+
+* parallélisation des tests automatisés dans la CI Github : https://guicommits.com/parallelize-pytest-tests-github-actions/
+
+=== Les CLI de la bibliothèque standard
+
+https://til.simonwillison.net/python/stdlib-cli-tools
+
+-> recherche de blocs `if {dunder}name{dunder} == '{dunder}main{dunder}'`
+
+Que font les CLI suivantes ?
+
+[%step]
+. python -m http.server
+. python -m gzip --decompress archive.gz
+. python3.11 -m site
+. python -m asyncio
+. echo '{"foo": "bar", "baz": [1, 2, 3]}' | python -m json.tool
+. python -m calendar
+
+[.notes]
+--
+. python -m http.server : expose le dossier courant dans un serveur web
+. python -m gzip --decompress archive.gz : décompresse une archive
+. python3.11 -m site : informations sur l'installation de Python
+. python -m asyncio : lance une REPL avec await utilisable dès le début et await
+. echo '{"foo": "bar", "baz": [1, 2, 3]}' | python -m json.tool : pretty-print
+. python -m calendar : affiche le calendrier de l'année en cours en mode texte
+--
+
+=== Protocoles et classes abstraites
+
+https://pybit.es/articles/typing-protocol-abc-alternative/[pybit.es/articles/typing-protocol-abc-alternative/] :
+
+* protocoles
+* classes abstraites
+
+.Voir https://youtu.be/qAS-zj0irEM?t=680 Typage (Michel Caradec)
+video::qAS-zj0irEM?t=680[youtube,width=480,height=260]
+
+=== Articles et projets 1/2
+
+[%step]
+[.medium-text]
+* https://www.syntaxerror.tech/syntax-error-11-debugging-python/[www.syntaxerror.tech/syntax-error-11-debugging-python/] : outils et pratiques de debug
+* les pièges des dates en Python (https://dev.arie.bovenberg.net/blog/python-datetime-pitfalls/[dev.arie.bovenberg.net/blog/python-datetime-pitfalls/])
+** bibliothèque pour les résoudre : https://github.com/ariebovenberg/whenever[github.com/ariebovenberg/whenever]
+* https://github.com/Klavionik/copykitten[github.com/Klavionik/copykitten] : échanger avec le presse-papier
+* https://github.com/mangiucugna/json_repair[github.com/mangiucugna/json_repair] : réparation de fichiers JSON mal formattés
+* détection de types de fichier :
+** https://github.com/cdgriffith/puremagic[] : entêtes de fichier ouvertes en mode texte
+** https://tika.apache.org/[] : utilisé lors des Panama papers
+** https://github.com/google/magika[] : heuristique de machine learning
+* https://www.nicholashairs.com/posts/major-changes-between-python-versions/[www.nicholashairs.com/posts/major-changes-between-python-versions]
+
+=== Articles et projets 2/2
+
+[%step]
+[.medium-text]
+* https://marimo.io/[marimo.io] : alternative aux notebooks Jupyter sans markdown
+* https://pypi.org/project/toolz/[pypi.org/project/toolz/] : pipeline de traitement de données
+* https://ashishb.net/all/using-python-poetry-inside-docker/[ashishb.net/all/using-python-poetry-inside-docker/] : Dockerfile et poetry
+* https://github.com/autometrics-dev/autometrics-py[github.com/autometrics-dev/autometrics-py] : métriques métier avec Prometheus et OpenTelemetry
+* https://medium.com/ambient-innovation/implementing-a-lasting-service-pattern-for-your-business-logic-96d6aaf7bdf4[medium.com/ambient-innovation/implementing-a-lasting-service-pattern-for-your-business-logic-96d6aaf7bdf4] : conseils ou de bonnes pratiques d'architecture de code
+* https://www.youtube.com/watch?v=knMg6G9_XCg[www.youtube.com/watch?v=knMg6G9_XCg] : Trey Hunner (PythonMorsels) Readability Counts - PyCon 2017
+
+== Et maintenant...
+
+> Si on travaille pour gagner sa vie, pourquoi se tuer au travail ?
+
+Bérengère et Arielle vont nous aider en ce sens 🙂🙏
