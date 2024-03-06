@@ -20,17 +20,6 @@ Par **Bérengère Mathieu** & **Arielle Livis**
 Python Rennes - vendredi 23 février 2024
 --
 
-// === Rediffusion des présentations
-
-// .Rediffusion vidéo : https://www.youtube.com/watch?v=XXX
-// video::XXX[youtube,width=480,height=360]
-
-// [.medium-text]
-// --
-// . Python : il buono, il brutto, il cattivo (Bérengère Mathieu & Arielle Livis) : TODO
-// --
-
-
 == Jérôme Armbruster, décédé le 19 janvier 2024
 
 .crédit photo : David Ferrière, HelloWork
