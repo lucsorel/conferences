@@ -6,9 +6,9 @@
 :toc:
 
 
-= Safedockerignore pre-commit hook
+= Safedockerignore, un hook pour pre-commit
 
-== Créer un hook pre-commit : vérifier son .dockerignore
+== Créer un hook pour pre-commit : vérifier son .dockerignore
 
 [.medium-text]
 *Luc Sorel-Giffo* -- jeudi 16 mai 2024 - 20h salle i58 -- https://events.rennes.tech/events/7df7b1ba-132a-4d17-8a3c-871642cffe35[Soirée des communautés techniques rennaises 2024]
@@ -76,7 +76,7 @@ component server as "Docker engine" {
 }
 
 dev -> [client] : "`docker build ...`\n"
-context .d. [client] : "pyproject.toml\ncode source (dossiers, fichiers)\nentrypoint.sh\netc."
+context .d. [client] : "Dockerfile\npyproject.toml\ncode source (dossiers, fichiers)\nentrypoint.sh\netc."
 [client] -l-> [demon] : "     API\n+ contexte"
 @enduml
 ----
@@ -111,9 +111,40 @@ tests/**/*-data.json
 !my_app/
 ----
 
-=== La vérification
+=== Principe de fonctionnement du hook
 
-TODO : schéma de vérification entre `Dockerfile` et `.dockerignore`
+[plantuml, target=activity-diagram, format=svg]
+----
+@startuml
+split
+  -[hidden]->
+  :Construction de l'image;
+  group Dockerfile {
+    :Extraction des ressources copiées;
+    floating note left
+      COPY pyproject.toml ./
+      COPY my-app/ ./
+    end note
+  }
+
+split again
+  -[hidden]->
+  :Contexte de build;
+  group .dockerignore {
+    :commence par une exclusion générale;
+    note right: "*"
+    :suivi d'inclusions;
+    note right: "!..."
+    :Extraction des ressources incluses\ndans le contexte de build;
+    floating note right
+      !pyproject.toml
+      !my-app/
+    end note
+  }
+end split
+:Vérification de la cohérence;
+@enduml
+----
 
 == Automatiser la vérification avec pre-commit 1/2
 
