@@ -5,7 +5,6 @@
 :icons: font
 :toc:
 
-
 = Safedockerignore, un hook pour pre-commit
 
 == Créer un hook pour pre-commit : vérifier son .dockerignore
@@ -76,8 +75,8 @@ component server as "Docker engine" {
 }
 
 dev -> [client] : "`docker build ...`\n"
-context .d. [client] : "Dockerfile\npyproject.toml\ncode source (dossiers, fichiers)\nentrypoint.sh\netc."
-[client] -l-> [demon] : "     API\n+ contexte"
+context .d. [client] : " = tous les 📁 et 📄\n du projet"
+[client] -l-> [demon] : "     API\n+ contexte {🗃️}"
 @enduml
 ----
 
@@ -111,42 +110,7 @@ tests/**/*-data.json
 !my_app/
 ----
 
-=== Principe de fonctionnement du hook
-
-[plantuml, target=activity-diagram, format=svg]
-----
-@startuml
-split
-  -[hidden]->
-  :Construction de l'image;
-  group Dockerfile {
-    :Extraction des ressources copiées;
-    floating note left
-      COPY pyproject.toml ./
-      COPY my-app/ ./
-    end note
-  }
-
-split again
-  -[hidden]->
-  :Contexte de build;
-  group .dockerignore {
-    :commence par une exclusion générale;
-    note right: "*"
-    :suivi d'inclusions;
-    note right: "!..."
-    :Extraction des ressources incluses\ndans le contexte de build;
-    floating note right
-      !pyproject.toml
-      !my-app/
-    end note
-  }
-end split
-:Vérification de la cohérence;
-@enduml
-----
-
-== Automatiser la vérification avec pre-commit 1/2
+== Les hooks de git
 
 💡 git propose des hooks pour contrôler son cycle de vie :
 
@@ -170,7 +134,7 @@ note right of commitmsg {
   Vérifie la syntaxe du message de commit
 }
 note right of precommit {
-  Analyse statique des fichiers commités
+  Analyse statique des fichiers en staging
   (formatage, lint, etc.)
 }
 @enduml
@@ -181,7 +145,7 @@ note right of precommit {
 * 🤯 écriture difficile de scripts de hook multiplateformes
 
 [.columns]
-== Automatiser la vérification avec pre-commit 2/2
+=== L'outil pre-commit
 
 [.column.is-one-fifth]
 --
@@ -197,9 +161,213 @@ _A framework for managing and maintaining multi-language pre-commit hooks._
 * 12.1k ⭐, 99+ releases (mai 2024)
 * open-source (MIT license)
 
-.Voir https://www.youtube.com/watch?v=l0HrTE45RVM[Hook'il est beau, notre code ! Guider la qualité de code avec pre-commit] BreizhCamp 2023
+.Voir https://www.youtube.com/watch?v=l0HrTE45RVM[youtu.be/l0HrTE45RVM] : Hook'il est beau, notre code ! Guider la qualité de code avec pre-commit (BreizhCamp 2023)
 video::l0HrTE45RVM[youtube,width=480,height=260]
 --
+
+=== Configuration avec .pre-commit-config.yaml
+
+[source,yaml]
+----
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+  - id: check-yaml              # syntaxe des 📄 yaml (aussi : json, xml, toml, etc.)
+  - id: trailing-whitespace     # nettoie les fins de ligne
+  - id: end-of-file-fixer       # un seul saut de ligne de fin de fichier
+
+  - id: check-added-large-files # évite de versionner de gros fichiers (>100 ko)
+    args: [--maxkb=100]
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.4.4
+  hooks:
+  - id: ruff
+  - id: ruff-format
+----
+
+== Principe de fonctionnement du hook safedockerignore
+
+[plantuml, target=activity-diagram, format=svg]
+----
+@startuml
+split
+  -[hidden]->
+  :Construction de l'image;
+  group Dockerfile {
+    :Extraction des ressources copiées;
+    floating note left
+      COPY pyproject.toml ./
+      COPY my-app/ ./
+    end note
+  }
+
+split again
+  -[hidden]->
+  :Contexte de build;
+  group .dockerignore {
+    floating note right
+      *
+      !pyproject.toml
+      !my-app/
+    end note
+    if (exclusion générale suivie d'inclusions ?) then (non)
+      #pink:commit rejeté;
+      kill
+    endif
+    :Extraction des ressources incluses\ndans le contexte de build;
+  }
+end split
+if (Cohérence ?) then (oui)
+  #palegreen:commit accepté;
+  kill
+else (non)
+  #pink:commit rejeté;
+  kill
+endif
+@enduml
+----
+
+[.columns]
+=== Créer un hook local "bash"
+
+[.column]
+--
+
+[source,text]
+----
+my-app
+ ├─ my_app/
+ │  └─ app.py   # fichier modifié en staging
+ ├─ .pre-commit-config.yaml
+ ├─ hooks/
+ │  └─ safedockerignore.sh
+ ...
+----
+
+[source,yaml]
+----
+📄 .pre-commit-config.yaml
+repos:
+- repo: local
+  hooks:
+  - id: safedockerignore
+    name: Safe .dockerignore
+    language: script
+    entry: ./hooks/safedockerignore.sh
+----
+
+[.medium-text]
+Voir https://pre-commit.com/#new-hooks[pre-commit.com/#new-hooks].
+--
+
+[.column]
+--
+[source,sh]
+----
+📄 hooks/safedockerignore.sh
+#!/usr/bin/env bash
+
+echo "safedockerignore.sh parameters: $@"
+echo "current working directory: $(pwd)"
+
+exit 1
+----
+
+[source,sh]
+----
+$ .venv/bin/pre-commit 
+Safe .dockerignore.............................Failed
+- hook id: safedockerignore
+- exit code: 1
+
+safedockerignore.sh parameters: my_app/app.py
+current working directory: /home/{...}/my-app
+----
+
+[.medium-text]
+* 👀 paramètres = noms de fichiers en staging
+* ⚠️ le dossier de travail est la racine git du projet
+--
+
+[.columns]
+=== Créer un hook local "python" simple
+
+[.column]
+--
+
+[source,text]
+----
+my-app
+ ├─ my_app/
+ │  └─ app.py   # fichier modifié en staging
+ ├─ .pre-commit-config.yaml
+ ├─ hooks/
+ │  └─ safedockerignore.py 👈
+ ...
+----
+
+[source,py]
+----
+📄 hooks/safedockerignore.py
+from argparse import ArgumentParser
+
+def main():
+  parser = ArgumentParser()
+  parser.add_argument(
+    'filenames', nargs='*',
+    help='Names of changed files'
+  )
+  parser.add_argument(
+    '--dockerfile', default='Dockerfile',
+    help='Dockerfile to process'
+  )
+  print(parser.parse_args())
+  return 1
+
+if __name__ == '__main__':
+  raise SystemExit(main())
+----
+--
+
+[.column]
+--
+[source,yaml]
+----
+📄 .pre-commit-config.yaml
+- repo: local
+  hooks:
+  - id: safedockerignore
+    name: Safe .dockerignore
+    language: script
+    entry: .venv/bin/python ./hooks/safedockerignore.py
+    args: [--dockerfile=Dockerfile.prod] # 👈
+----
+
+[source,text]
+----
+$ .venv/bin/pre-commit 
+Safe .dockerignore.............................Failed
+- hook id: safedockerignore
+- exit code: 1
+
+Namespace(
+  filenames=['my_app/app.py'],
+  dockerfile='Dockerfile.prod'
+)
+----
+--
+
+== Conclusion
+* hook git -> dossier de travail = racine git
+* un hook peut être appelé plusieurs fois avec des noms de fichier différents
+
+Dans une prochaine session Python Rennes ?
+
+* hook python plus complexe (imports, dépendances, etc. un sous-projet à part entière)
+* REX avancé code Python
+* publication du hook dans un dépôt git extérieur
 
 == Merci !
 
