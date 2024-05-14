@@ -1,0 +1,211 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+
+= Safedockerignore pre-commit hook
+
+== Créer un hook pre-commit : vérifier son .dockerignore
+
+[.medium-text]
+*Luc Sorel-Giffo* -- jeudi 16 mai 2024 - 20h salle i58 -- https://events.rennes.tech/events/7df7b1ba-132a-4d17-8a3c-871642cffe35[Soirée des communautés techniques rennaises 2024]
+
+[.medium-text]
+https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social]
+
+=== Au programme
+
+* parcours de création d'un hook pour l'outil https://pre-commit.com/[pre-commit]
+* 💡 infos glanées au passage sur
+** Docker
+** git
+** Python
+
+== Motivation : sécuriser et accélérer "docker build" 1/2
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml
+skinparam componentStyle rectangle
+skinparam linetype ortho
+() "Dev" as dev
+component client [
+  CLI
+  docker
+]
+component server as "Docker engine" {
+  component demon [
+    démon
+    docker
+  ]
+  component runtime [
+    exécuteur de conteneurs
+    containerd
+  ]
+}
+
+dev -> [client] : "`docker run ...`\n"
+[client] -> [demon] : "API"
+[demon] --> [runtime]
+@enduml
+----
+
+💡 Docker fonctionne avec une architecture client-serveur
+
+=== Motivation : sécuriser et accélérer "docker build" 2/2
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment left
+
+() "Dev" as dev
+cloud "contexte de build" as context
+component client [
+  CLI
+  docker
+]
+component server as "Docker engine" {
+  component demon [
+    démon
+    docker
+  ]
+}
+
+dev -> [client] : `docker build ...`
+context .d. [client] : "pyproject.toml\ncode source (dossiers, fichiers)\nentrypoint.sh\netc."
+[client] -l-> [demon] : "     API\n+ contexte"
+@enduml
+----
+
+💡 `.dockerignore` : exclure des ressources du contexte de build
+- ressources inutiles (bande passante)
+- ressources sensibles (secrets)
+
+== Syntaxe d'un .dockerignore
+
+Syntaxe classique :
+
+[source,sh]
+----
+# exclut un dossier
+tests/
+# exclut un fichier
+sample-data.json
+# exclut via un pattern
+tests/**/*-data.json
+----
+
+💡 Syntaxe agressive :
+
+[source,sh]
+----
+# exclut tout
+*
+# règles d'inclusion ("!..." -> "sauf ...")
+!pyproject.toml
+!my_app/
+----
+
+== Automatiser la vérification avec pre-commit 1/2
+
+💡 git propose des hooks pour contrôler son cycle de vie :
+
+[plantuml, target=usecase-diagram, format=svg]
+----
+@startuml
+actor dev
+rectangle "git commit -m 'feat: add login'" as commit {
+}
+package ".git/hooks" {
+  frame "commit-msg" as commitmsg
+  frame "pre-commit" as precommit
+}
+commitmsg -[hidden]down- precommit
+dev -> commit
+commit -> commitmsg: "'feat: add login'"
+commit <. commitmsg: 0
+commit -> precommit: "\napp.py\nlogin.py"
+commit <. precommit: 0
+note right of commitmsg {
+  Vérifie la syntaxe du message de commit
+}
+note right of precommit {
+  Analyse statique des fichiers commités
+  (formatage, lint, etc.)
+}
+@enduml
+----
+
+[.medium-text]
+* ⚠️ `.git/hooks` pas versionnable
+* 🤯 comment écrire des hooks multiplateformes ?
+
+[.columns]
+== Automatiser la vérification avec pre-commit 2/2
+
+[.column.is-one-fifth]
+--
+image::assets/pre-commit-logo.png[title="https://pre-commit.com/"]
+--
+
+[.column]
+--
+_A framework for managing and maintaining multi-language pre-commit hooks._
+
+[.medium-text]
+* https://github.com/pre-commit/pre-commit[github.com/pre-commit/pre-commit]
+* 12.1k ⭐, 99+ releases (mai 2024)
+* open-source (MIT license)
+
+.Voir https://www.youtube.com/watch?v=l0HrTE45RVM[Hook'il est beau, notre code ! Guider la qualité de code avec pre-commit] BreizhCamp 2023
+video::l0HrTE45RVM[youtube,width=480,height=260]
+--
+
+== Merci !
+
+Des questions ?
+
+[.medium-text]
+Présentation à retrouver sur https://github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore[github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore] 📑
+
+
+[.columns]
+=== Rejoignez Python Rennes !
+
+[.column]
+--
+[.medium-text]
+Communauté "services numériques" complétant les communautés datascience existantes.
+
+[.medium-text]
+355 membres 🎉
+
+.Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
+image::assets/python_rennes-communauté.png[communauté Python Rennes]
+--
+
+[.column]
+--
+[.medium-text]
+Rejoignez https://pythonrennes.slack.com[pythonrennes.slack.com] (actualités, entraide, orga).
+
+[.medium-text]
+71 membres
+
+.Invitation slack : https://join.slack.com/t/pythonrennes/shared_invite/zt-1yd4yioap-lBAngm3Q0jxAKLP6fYJR8w
+image::assets/qr_code-slack-Python_Rennes.svg[Rejoindre le slack Python Rennes, 50%]
+--
+
+[.column]
+--
+[.medium-text]
+Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRennes[@PythonRennes]
+
+[.medium-text]
+83 personnes abonnées
+--
