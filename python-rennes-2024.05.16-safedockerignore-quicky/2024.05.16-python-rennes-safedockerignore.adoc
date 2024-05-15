@@ -182,7 +182,7 @@ repos:
   - id: end-of-file-fixer       # un seul saut de ligne de fin de fichier
 
   - id: check-added-large-files # évite de versionner de gros fichiers (>100 ko)
-    args: [--maxkb=100]
+    args: [--maxkb=100]         # 👈 configurable
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.4.4
@@ -396,7 +396,8 @@ if not resources:
 
 * hook pre-commit = outil CLI
 ** argparse, click, fire, etc. (-> https://jiel.github.io/c-est-cli-qui-gagne[jiel.github.io/c-est-cli-qui-gagne])
-** return 0 (succès) ou un code d'erreur
+** return `0` (succès) ou un code d'erreur
+* configuration projet dans `.pre-commit-config.yaml`
 * hook git -> dossier de travail = racine git
 
 === Dans une prochaine session Python Rennes ?
