@@ -9,11 +9,15 @@
 
 == Créer un hook pour pre-commit : vérifier son .dockerignore
 
-[.medium-text]
-*Luc Sorel-Giffo* -- jeudi 16 mai 2024 - 20h salle i58 -- https://events.rennes.tech/events/7df7b1ba-132a-4d17-8a3c-871642cffe35[Soirée des communautés techniques rennaises 2024]
+image:assets/safedockerignore-quicky.png[Safedockerignore banner]
 
 [.medium-text]
-https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social]
+https://events.rennes.tech/events/7df7b1ba-132a-4d17-8a3c-871642cffe35[Soirée des communautés techniques rennaises]
+[.medium-text]
+*Luc Sorel-Giffo* -- jeudi 16 mai 2024 -- 20h salle i58
+
+[.small-text]
+https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social] (dev Python chez https://www.purecontrol.com[Purecontrol] ∞)
 
 === Au programme
 
@@ -359,20 +363,52 @@ Namespace(
 ----
 --
 
+=== Gestion des patterns de fichiers - pathlib.Path
+
+[source,Dockerfile]
+----
+📄 Dockerfile
+...
+COPY config/**/*-config.json configs/
+----
+
+[source,python]
+----
+from pathlib import Path
+
+current_working_dir = Path.cwd()
+
+resources_rule = 'config/**/*-config.json'
+resources = list(current_working_dir.glob(resources_rules))
+if not resources:
+  print(f'Dockerfile error: COPY {resources_rules} instruction matches no resource')
+----
+
+[%step]
+[.medium-text]
+* `Path.cwd()` renvoie le dossier de travail en cours (-> racine git)
+* `path.glob('*.py')` renvoie un itérateur de noms de fichier correspondant strictement au pattern
+* `path.rglob('*.py')` recherche récursivement dans les sous-dossiers
+* (🙏 ne plus utiliser `os.path` pour gérer les chemins de fichiers)
+* -> https://docs.python.org/3/library/pathlib.html[docs.python.org/3/library/pathlib.html]
+
 == Conclusion
+
 * hook pre-commit = outil CLI
+** argparse, click, fire, etc. (-> https://jiel.github.io/c-est-cli-qui-gagne[jiel.github.io/c-est-cli-qui-gagne])
+** return 0 (succès) ou un code d'erreur
 * hook git -> dossier de travail = racine git
-* un hook peut être appelé plusieurs fois avec des noms de fichier différents
 
 === Dans une prochaine session Python Rennes ?
 
 * hook python plus complexe (imports, dépendances, etc. un sous-projet à part entière)
-* REX Python plus détaillé
+* REX plus détaillé
+** Python
+** pre-commit
 * publication du hook dans un dépôt git indépendant
 
-
 [.columns]
-=== Rejoignez Python Rennes !
+== Rejoignez Python Rennes !
 
 [.column]
 --
@@ -409,7 +445,9 @@ Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRen
 
 == Merci !
 
+image:assets/safedockerignore-quicky.png[Safedockerignore banner]
+
 Des questions ?
 
-[.medium-text]
-Présentation à retrouver sur https://github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore[github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore] 📑
+[.small-text]
+Diaporama à retrouver sur https://github.com/lucsorel/conferences/tree/main/python-rennes-2024.05.16-safedockerignore-quicky[github.com/lucsorel/conferences/tree/main/python-rennes-2024.05.16-safedockerignore-quicky]
