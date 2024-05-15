@@ -80,7 +80,7 @@ context .d. [client] : " = tous les 📁 et 📄\n du projet"
 @enduml
 ----
 
-💡 `.dockerignore` exclut des ressources du contexte de build
+💡 *.dockerignore*, pour exclure des ressources du contexte de build
 
 * ressources inutiles (bande passante, temps)
 * ressources sensibles (secrets)
@@ -255,7 +255,7 @@ repos:
   - id: safedockerignore
     name: Safe .dockerignore
     language: script
-    entry: ./hooks/safedockerignore.sh
+    entry: ./hooks/safedockerignore.sh # chmode +x
 ----
 
 [.medium-text]
@@ -360,21 +360,15 @@ Namespace(
 --
 
 == Conclusion
+* hook pre-commit = outil CLI
 * hook git -> dossier de travail = racine git
 * un hook peut être appelé plusieurs fois avec des noms de fichier différents
 
-Dans une prochaine session Python Rennes ?
+=== Dans une prochaine session Python Rennes ?
 
 * hook python plus complexe (imports, dépendances, etc. un sous-projet à part entière)
-* REX avancé code Python
-* publication du hook dans un dépôt git extérieur
-
-== Merci !
-
-Des questions ?
-
-[.medium-text]
-Présentation à retrouver sur https://github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore[github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore] 📑
+* REX Python plus détaillé
+* publication du hook dans un dépôt git indépendant
 
 
 [.columns]
@@ -386,7 +380,7 @@ Présentation à retrouver sur https://github.com/lucsorel/conferences/python-re
 Communauté "services numériques" complétant les communautés datascience existantes.
 
 [.medium-text]
-355 membres 🎉
+356 membres 🎉
 
 .Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
 image::assets/python_rennes-communauté.png[communauté Python Rennes]
@@ -412,3 +406,10 @@ Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRen
 [.medium-text]
 83 personnes abonnées
 --
+
+== Merci !
+
+Des questions ?
+
+[.medium-text]
+Présentation à retrouver sur https://github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore[github.com/lucsorel/conferences/python-rennes-2024.05.16-safedockerignore] 📑
