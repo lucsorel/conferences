@@ -1,0 +1,454 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Safedockerignore, un hook pour pre-commit
+
+== Créer un hook pour pre-commit : vérifier son .dockerignore
+
+image:assets/safedockerignore-quicky.png[Safedockerignore banner]
+
+[.medium-text]
+https://events.rennes.tech/events/7df7b1ba-132a-4d17-8a3c-871642cffe35[Soirée des communautés techniques rennaises]
+[.medium-text]
+*Luc Sorel-Giffo* -- jeudi 16 mai 2024 -- 20h salle i58
+
+[.small-text]
+https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social] (dev Python chez https://www.purecontrol.com[Purecontrol] ∞)
+
+=== Au programme
+
+* parcours de création d'un hook pour l'outil https://pre-commit.com/[pre-commit]
+* 💡 infos glanées au passage sur
+** Docker
+** git
+** Python
+
+== Motivation : sécuriser et accélérer "docker build" 1/2
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml
+skinparam componentStyle rectangle
+actor "Dev" as dev
+component client [
+  CLI
+  docker
+]
+component server as "Docker engine" {
+  component demon [
+    démon
+    docker
+  ]
+  component runtime [
+    exécuteur de conteneurs
+    containerd
+  ]
+}
+
+dev -> [client] : "`docker run ...`\n"
+[client] -> [demon] : "API"
+[demon] --> [runtime]
+@enduml
+----
+
+💡 Docker fonctionne avec une architecture client-serveur
+
+=== Motivation : sécuriser et accélérer "docker build" 2/2
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment left
+
+actor "Dev" as dev
+cloud "contexte de build" as context
+component client [
+  CLI
+  docker
+]
+component server as "Docker engine" {
+  component demon [
+    démon
+    docker
+  ]
+}
+
+dev -> [client] : "`docker build ...`\n"
+context .d. [client] : " = tous les 📁 et 📄\n du projet"
+[client] -l-> [demon] : "     API\n+ contexte {🗃️}"
+@enduml
+----
+
+💡 *.dockerignore*, pour exclure des ressources du contexte de build
+
+* ressources inutiles (bande passante, temps)
+* ressources sensibles (secrets)
+
+=== Syntaxe d'un .dockerignore
+
+Syntaxe classique :
+
+[source,sh]
+----
+# exclut un dossier
+tests/
+# exclut un fichier
+sample-data.json
+# exclut via un pattern
+tests/**/*-data.json
+----
+
+💡 Syntaxe agressive :
+
+[source,sh]
+----
+# exclut tout
+*
+# règles d'inclusion ("!..." -> "sauf ...")
+!pyproject.toml
+!my_app/
+----
+
+== Les hooks de git
+
+💡 git propose des hooks pour contrôler son cycle de vie :
+
+[plantuml, target=usecase-diagram, format=svg]
+----
+@startuml
+actor "Dev" as dev
+rectangle "git commit -m 'feat: add login'" as commit {
+}
+package ".git/hooks" {
+  frame "commit-msg" as commitmsg
+  frame "pre-commit" as precommit
+}
+commitmsg -[hidden]down- precommit
+dev -> commit
+commit -> commitmsg: "'feat: add login'"
+commit <. commitmsg: 0
+commit -> precommit: "\napp.py\nlogin.py"
+commit <. precommit: 0
+note right of commitmsg {
+  Vérifie la syntaxe du message de commit
+}
+note right of precommit {
+  Analyse statique des fichiers en staging
+  (formatage, lint, etc.)
+}
+@enduml
+----
+
+[.medium-text]
+* ⚠️ `.git/hooks` pas versionnable
+* 🤯 écriture difficile de scripts de hook multiplateformes
+
+[.columns]
+=== L'outil pre-commit
+
+[.column.is-one-fifth]
+--
+image::assets/pre-commit-logo.png[title="https://pre-commit.com/"]
+--
+
+[.column]
+--
+_A framework for managing and maintaining multi-language pre-commit hooks._
+
+[.medium-text]
+* https://github.com/pre-commit/pre-commit[github.com/pre-commit/pre-commit]
+* 12.1k ⭐, 99+ releases (mai 2024)
+* open-source (MIT license)
+
+.Voir https://www.youtube.com/watch?v=l0HrTE45RVM[youtu.be/l0HrTE45RVM] : Hook'il est beau, notre code ! Guider la qualité de code avec pre-commit (BreizhCamp 2023)
+video::l0HrTE45RVM[youtube,width=480,height=260]
+--
+
+=== Configuration avec .pre-commit-config.yaml
+
+[source,yaml]
+----
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+  - id: check-yaml              # syntaxe des 📄 yaml (aussi : json, xml, toml, etc.)
+  - id: trailing-whitespace     # nettoie les fins de ligne
+  - id: end-of-file-fixer       # un seul saut de ligne de fin de fichier
+
+  - id: check-added-large-files # évite de versionner de gros fichiers (>100 ko)
+    args: [--maxkb=100]         # 👈 configurable
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.4.4
+  hooks:
+  - id: ruff
+  - id: ruff-format
+----
+
+== Principe de fonctionnement du hook safedockerignore
+
+[plantuml, target=activity-diagram, format=svg]
+----
+@startuml
+split
+  -[hidden]->
+  :Construction de l'image;
+  group Dockerfile {
+    :Extraction des ressources copiées;
+    floating note left
+      COPY pyproject.toml ./
+      COPY my-app/ ./
+    end note
+  }
+
+split again
+  -[hidden]->
+  :Contexte de build;
+  group .dockerignore {
+    floating note right
+      *
+      !pyproject.toml
+      !my-app/
+    end note
+    if (exclusion générale suivie d'inclusions ?) then (non)
+      #pink:commit rejeté;
+      kill
+    endif
+    :Extraction des ressources incluses\ndans le contexte de build;
+  }
+end split
+if (Cohérence ?) then (oui)
+  #palegreen:commit accepté;
+  kill
+else (non)
+  #pink:commit rejeté;
+  kill
+endif
+@enduml
+----
+
+[.columns]
+=== Créer un hook local "bash"
+
+[.column]
+--
+
+[source,text]
+----
+my-app
+ ├─ my_app/
+ │  └─ app.py   # fichier modifié en staging
+ ├─ .pre-commit-config.yaml
+ ├─ hooks/
+ │  └─ safedockerignore.sh
+ ...
+----
+
+[source,yaml]
+----
+📄 .pre-commit-config.yaml
+repos:
+- repo: local
+  hooks:
+  - id: safedockerignore
+    name: Safe .dockerignore
+    language: script
+    entry: ./hooks/safedockerignore.sh # chmode +x
+----
+
+[.medium-text]
+Voir https://pre-commit.com/#new-hooks[pre-commit.com/#new-hooks].
+--
+
+[.column]
+--
+[source,sh]
+----
+📄 hooks/safedockerignore.sh
+#!/usr/bin/env bash
+
+echo "safedockerignore.sh parameters: $@"
+echo "current working directory: $(pwd)"
+
+exit 1
+----
+
+[source,sh]
+----
+$ .venv/bin/pre-commit 
+Safe .dockerignore.............................Failed
+- hook id: safedockerignore
+- exit code: 1
+
+safedockerignore.sh parameters: my_app/app.py
+current working directory: /home/{...}/my-app
+----
+
+[.medium-text]
+* 👀 paramètres = noms de fichiers en staging
+* ⚠️ le dossier de travail est la racine git du projet
+--
+
+[.columns]
+=== Créer un hook local "python" simple
+
+[.column]
+--
+
+[source,text]
+----
+my-app
+ ├─ my_app/
+ │  └─ app.py   # fichier modifié en staging
+ ├─ .pre-commit-config.yaml
+ ├─ hooks/
+ │  └─ safedockerignore.py 👈
+ ...
+----
+
+[source,py]
+----
+📄 hooks/safedockerignore.py
+from argparse import ArgumentParser
+
+def main():
+  parser = ArgumentParser()
+  parser.add_argument(
+    'filenames', nargs='*',
+    help='Names of changed files'
+  )
+  parser.add_argument(
+    '--dockerfile', default='Dockerfile',
+    help='Dockerfile to process'
+  )
+  print(parser.parse_args())
+  return 1
+
+if __name__ == '__main__':
+  raise SystemExit(main())
+----
+--
+
+[.column]
+--
+[source,yaml]
+----
+📄 .pre-commit-config.yaml
+- repo: local
+  hooks:
+  - id: safedockerignore
+    name: Safe .dockerignore
+    language: script
+    entry: .venv/bin/python ./hooks/safedockerignore.py
+    args: [--dockerfile=Dockerfile.prod] # 👈
+----
+
+[source,text]
+----
+$ .venv/bin/pre-commit 
+Safe .dockerignore.............................Failed
+- hook id: safedockerignore
+- exit code: 1
+
+Namespace(
+  filenames=['my_app/app.py'],
+  dockerfile='Dockerfile.prod'
+)
+----
+--
+
+=== Gestion des patterns de fichiers - pathlib.Path
+
+[source,Dockerfile]
+----
+📄 Dockerfile
+...
+COPY config/**/*-config.json configs/
+----
+
+[source,python]
+----
+from pathlib import Path
+
+current_working_dir = Path.cwd()
+
+resources_rule = 'config/**/*-config.json'
+resources = list(current_working_dir.glob(resources_rules))
+if not resources:
+  print(f'Dockerfile error: COPY {resources_rules} instruction matches no resource')
+----
+
+[%step]
+[.medium-text]
+* `Path.cwd()` renvoie le dossier de travail en cours (-> racine git)
+* `path.glob('*.py')` renvoie un itérateur de noms de fichier correspondant strictement au pattern
+* `path.rglob('*.py')` recherche récursivement dans les sous-dossiers
+* (🙏 ne plus utiliser `os.path` pour gérer les chemins de fichiers)
+* -> https://docs.python.org/3/library/pathlib.html[docs.python.org/3/library/pathlib.html]
+
+== Conclusion
+
+* hook pre-commit = outil CLI
+** argparse, click, fire, etc. (-> https://jiel.github.io/c-est-cli-qui-gagne[jiel.github.io/c-est-cli-qui-gagne])
+** return `0` (succès) ou un code d'erreur
+* configuration projet dans `.pre-commit-config.yaml`
+* hook git -> dossier de travail = racine git
+
+=== Dans une prochaine session Python Rennes ?
+
+* hook python plus complexe (imports, dépendances, etc. un sous-projet à part entière)
+* REX plus détaillé
+** Python
+** pre-commit
+* publication du hook dans un dépôt git indépendant
+
+[.columns]
+== Rejoignez Python Rennes !
+
+[.column]
+--
+[.medium-text]
+Communauté "services numériques" complétant les communautés datascience existantes.
+
+[.medium-text]
+357 membres 🎉
+
+.Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
+image::assets/python_rennes-communauté.png[communauté Python Rennes]
+--
+
+[.column]
+--
+[.medium-text]
+Rejoignez https://pythonrennes.slack.com[pythonrennes.slack.com] (actualités, entraide, orga).
+
+[.medium-text]
+71 membres
+
+.Invitation slack : https://join.slack.com/t/pythonrennes/shared_invite/zt-1yd4yioap-lBAngm3Q0jxAKLP6fYJR8w
+image::assets/qr_code-slack-Python_Rennes.svg[Rejoindre le slack Python Rennes, 50%]
+--
+
+[.column]
+--
+[.medium-text]
+Compte +++<del>+++Twitter+++</del>+++ **X** 🤷 : https://twitter.com/PythonRennes[@PythonRennes]
+
+[.medium-text]
+83 personnes abonnées
+--
+
+== Merci !
+
+image:assets/safedockerignore-quicky.png[Safedockerignore banner]
+
+Des questions ?
+
+[.small-text]
+Diaporama à retrouver sur https://github.com/lucsorel/conferences/tree/main/python-rennes-2024.05.16-safedockerignore-quicky[github.com/lucsorel/conferences/tree/main/python-rennes-2024.05.16-safedockerignore-quicky]
