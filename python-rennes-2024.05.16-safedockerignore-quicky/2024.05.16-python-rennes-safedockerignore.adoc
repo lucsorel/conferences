@@ -417,7 +417,7 @@ if not resources:
 Communauté "services numériques" complétant les communautés datascience existantes.
 
 [.medium-text]
-356 membres 🎉
+357 membres 🎉
 
 .Groupe meetup : https://www.meetup.com/fr-FR/python-rennes/
 image::assets/python_rennes-communauté.png[communauté Python Rennes]
