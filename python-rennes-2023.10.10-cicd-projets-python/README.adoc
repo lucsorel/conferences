@@ -12,4 +12,5 @@ Pour exporter le diaporama en pdf :
 . ouvrez le diaporama dans Chromium ou Chrome
 . ajouter `?print-pdf` à la fin de l'URL du diaporama dans le navigateur
 . imprimez le document en PDF avec `ctrl p` ou `cmd p`
+. appuyer sur `s` pour lancer le presenter mode
 

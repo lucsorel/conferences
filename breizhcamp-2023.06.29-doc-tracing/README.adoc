@@ -12,6 +12,7 @@ The slideshows were designed to be displayed using the https://marketplace.visua
 
 . display the commands with `ctrl shift p`
 . use the `Asciidoc Slides: Open Slides in Browser` command
+. appuyer sur `s` pour lancer le presenter mode
 
 Documentation about the https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[Asciidoc syntax for slideshows].
 
