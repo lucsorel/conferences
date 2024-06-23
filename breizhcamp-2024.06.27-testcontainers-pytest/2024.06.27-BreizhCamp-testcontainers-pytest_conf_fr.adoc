@@ -11,7 +11,9 @@
 
 [.splashscreen-title]
 ****
-Tu ne douteras plus de tes fonctionnalités, jeune Pydawan·e
+Tu ne douteras plus de tes fonctionnalités,
+
+jeune Pydawan·e
 ****
 
 [.medium-text]
@@ -168,6 +170,11 @@ Environnement technique :
 @endmindmap
 ----
 
+[.notes]
+--
+https://www.bitecode.dev/p/testing-with-python-part-5-the-different
+--
+
 [.columns]
 == Testcontainers
 
@@ -191,6 +198,27 @@ _A framework for providing throwaway, lightweight instances of databases, messag
 * 112 contributeur·ices
 --
 
+=== Principe de fonctionnement
+
+* démarrage du container (+ / - configuré)
+* API pour interagir avec (URL de connexion, identifiants)
+* interactions avec le container (tests)
+* arrêt et suppression du container
+
+* architecture d'une base de code
+** code de prod
+** code de test
+** conftest
+** fixture
+
+Câblage :
+** par variable d'environnements (peu intrusif ; /!\ si elles sont renommées)
+** monkeypatching (intrusion localisée - avec les bons outils)
+
+markers pytest
+* pouvoir labelliser des cas de tests (exclusion ou sélection)
+* désélection conditionnel skipif
+
 == Conclusions
 
 * motivations & approches de test
@@ -198,10 +226,23 @@ _A framework for providing throwaway, lightweight instances of databases, messag
 * utiliser testcontainers au sein d'une session de tests pytest
 * générer de la documentation fonctionnalité-architecture
 
+[.columns]
 == Merci 🙏
 
+[.column]
+--
 [.splashscreen-title]
 Des questions ?
 
-[.medium-text]
+[.small-text]
 Présentation à retrouver sur https://github.com/lucsorel/conferences/tree/main/breizhcamp-2024.06.27-testcontainers-pytest[github.com/lucsorel/conferences/{...}/breizhcamp-2024.06.27-testcontainers-pytest] 📑
+--
+
+[.column.is-one-third]
+--
+
+.Vos retours sur https://openfeedback.io/LyIREj0UbxmZ6vcFmxmN/2024-06-27/670894[openfeedback.io/LyIREj0UbxmZ6vcFmxmN/2024-06-27/670894]
+image::assets/openfeedback-testcontainers.svg[Vos retours sur openfeedback, 75%]
+--
+
+
