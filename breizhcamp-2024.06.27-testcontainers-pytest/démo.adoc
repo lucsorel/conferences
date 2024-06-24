@@ -4,7 +4,8 @@
 
 . montrer `members_agenda_api/__main__.py` -> application FastAPI, `ctrl clic` sur `API_ROUTER `
 . arrivée dans `members_agenda_api/api.py` -> défiler vers `get_venues()`, `ctrl clic` sur `get_data_service()`
-. arrivée dans `members_agenda_api/services/__init__.py`, scroller vers `get_connection()` -> variables d'environnement
+. arrivée dans `members_agenda_api/services/__init__.py`, `ctrl clic` sur `get_connection()`
+, scroller vers `get_connection()` -> variables d'environnement
 . cliquer sur `DataService`
 . arrivée dans `members_agenda_api/services/dataservice.py` -> `_query()` et `_prepared_query()`, puis `get_venue()`
 . `get_venue()` : _query() .fetchall() sur une requête en chaîne de caractères. fetchall() ok car peu d'entrées, pas besoin de paginer
@@ -21,7 +22,8 @@
 
 [source,sh]
 ----
-poetry run pytest -v -k test_1_get_venues_raw
+poetry run pytest -v -k test_get_2_venues_envvars
+poetry run pytest -v tests/members_agenda_api/test_1_get_venues_envvars.py
 ----
 
 "Lire les variables d'environnement tout le temps dans get_connection()" ?
@@ -30,7 +32,8 @@ poetry run pytest -v -k test_1_get_venues_raw
 
 [source,sh]
 ----
-poetry run pytest -v -k test_1_get_venues_raw
+poetry run pytest -v -k test_get_2_venues_envvars
+poetry run pytest -v tests/members_agenda_api/test_1_get_venues_envvars.py
 ----
 
 -> "ça plante, pourquoi ?"
@@ -38,3 +41,22 @@ poetry run pytest -v -k test_1_get_venues_raw
 * la variables d'environnement sont lues avant d'être modifiées par le test
 
 Retour au diaporama pour un bilan.
+
+== Démo 2 - monkeypatch
+
+`tests/members_agenda_api/test_2_get_venues_mkp.py`
+
+[source,sh]
+----
+poetry run pytest -v -k test_get_2_venues_mkp
+poetry run pytest -v tests/members_agenda_api/test_2_get_venues_mkp.py
+----
+
+Si on sort la lecture des variables d'environnement, ça marche toujours
+
+[source,sh]
+----
+poetry run pytest -v tests/members_agenda_api/test_1_get_venues_envvars.py tests/members_agenda_api/test_1_get_venues_envvars.py
+----
+
+-> bilan

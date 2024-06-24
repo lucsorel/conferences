@@ -299,8 +299,91 @@ def test_get_venues():
 * surcharger des variables d'environnement
 ** tests fragiles
 ** les lire à chaque connexion est contre-intuitif
+* tout le code de test doit être dans le "with MySqlContainer() ..."
 
-=== 🧪2 : monkeypatch
+== 🐒 monkeypatch
+
+* `fixture` : fonctionnalité ou données de test injectées par pytest
+
+* `monkeypatch` : fixture permettant de modifier (le temps du cas de test) toute propriété d'un objet
+
+* "_In Python, everything is an object_"
+
+-> les définitions d'un module peuvent être modifiées à chaud
+
+[.notes]
+--
+Quand l'interpréteur python résoud un appel de fonction :
+* il cherche le nom dans l'espace de nommage du module en cours
+* l'espace de nommage est un `dict[str, Any]` ; on y trouve :
+* les imports
+* les définitions du module (variables, fonctions, classes)
+
+C'est pour ça :
+* qu'il faut déclarer une fonction avant de pouvoir s'en servir
+* que lorsque 2 définitions ont le même nom, la dernière écrase la précédente
+--
+
+=== 🐒 monkeypatch
+
+[.medium-text]
+Dans `test_get_venues.py`, quelle définition de module faut-il modifier ?
+
+[source,text]
+----
+members_agenda_api/
+ ├─ services/
+ │  ├─ connection.py  # 🍌 def get_connection()
+ │  ├─ dataservice.py # class DataService
+ │  └─ __init__.py    # 🍌 import get_connection, DataService ; def get_data_service()
+ ├─ api.py            # import get_data_service ; API_ROUTER = ...
+ ├─ __main__.py       # import API_ROUTER ; app = ...
+ ├─ ...
+ ├─ tests/
+ │  ├─ test_get_venues.py  # TestClient(app) ; 🐒 ?
+ ...
+----
+
+=== 🧪2 monkeypatch
+
+[source,python]
+----
+from fastapi.testclient import TestClient
+from pymysql.connections import Connection
+from testcontainers.mysql import MySqlContainer
+
+from members_agenda_api.__main__ import app
+
+from tests.members_agenda_api.test_1_get_venues_envvars import create_2_test_venues
+
+def test_get_2_venues_mkp(monkeypatch):
+    with MySqlContainer() as container:
+        connection = Connection(
+            host=container.get_container_host_ip(),
+            port=int(container.get_exposed_port(3306)),
+            user=container.username, password=container.password,
+            database=container.dbname,
+        )
+        create_2_test_venues(connection)
+
+        monkeypatch.setattr(
+            'members_agenda_api.services.get_connection', lambda: connection
+        )
+
+        client = TestClient(app)
+        response = client.get('/api/venues')
+        assert response.status_code == 200
+        ...
+----
+=== 🧪2 : le bilan
+
+🤷 ?
+
+=== 🧪2 : le bilan
+
+* ce qui est monkeypatché n'est pas testé
+* les modifications faites par monkeypatch durent le temps du cas de test
+* cumul des démarrages de conteneurs 🐌
 
 == Bonnes pratiques
 
