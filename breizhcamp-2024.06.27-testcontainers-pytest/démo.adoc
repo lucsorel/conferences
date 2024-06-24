@@ -1,0 +1,40 @@
+= Déroulé des démos
+
+== Démo 1 - env vars
+
+. montrer `members_agenda_api/__main__.py` -> application FastAPI, `ctrl clic` sur `API_ROUTER `
+. arrivée dans `members_agenda_api/api.py` -> défiler vers `get_venues()`, `ctrl clic` sur `get_data_service()`
+. arrivée dans `members_agenda_api/services/__init__.py`, scroller vers `get_connection()` -> variables d'environnement
+. cliquer sur `DataService`
+. arrivée dans `members_agenda_api/services/dataservice.py` -> `_query()` et `_prepared_query()`, puis `get_venue()`
+. `get_venue()` : _query() .fetchall() sur une requête en chaîne de caractères. fetchall() ok car peu d'entrées, pas besoin de paginer
+
+=== Comment tester cela ?
+
+`tests/members_agenda_api/test_get_venues_raw.py`
+
+. création d'un conteneur
+. surcharge des variables d'environnement
+. `create_2_test_venues(get_connection())` -> import de `get_connection()`
+. TestClient
+. assertions classiques
+
+[source,sh]
+----
+poetry run pytest -v -k test_1_get_venues_raw
+----
+
+"Lire les variables d'environnement tout le temps dans get_connection()" ?
+
+-> faire des globales et économiser du CPU
+
+[source,sh]
+----
+poetry run pytest -v -k test_1_get_venues_raw
+----
+
+-> "ça plante, pourquoi ?"
+
+* la variables d'environnement sont lues avant d'être modifiées par le test
+
+Retour au diaporama pour un bilan.

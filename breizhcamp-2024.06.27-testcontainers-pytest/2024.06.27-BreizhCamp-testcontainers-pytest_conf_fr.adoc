@@ -35,6 +35,25 @@ image::assets/purecontrol.png[Interface Purecontrol, 75%]
 
 [.column]
 --
+
+--
+
+[.columns]
+=== Qui suis-je ?
+
+[.column]
+--
+* tech lead Python chez Purecontrol `#techForGood`
+
+image::assets/purecontrol.png[Interface Purecontrol, 75%]
+
+* (OSS) outils doc-as-code :
+** https://github.com/lucsorel/py2puml[py2puml]
+** https://github.com/lucsorel/pydoctrace[pydoctrace]
+--
+
+[.column]
+--
 * co-animateur Python Rennes
 
 .Meetup : https://www.meetup.com/fr-FR/python-rennes/[www.meetup.com/fr-FR/python-rennes]
@@ -46,16 +65,17 @@ image::assets/qr_code-slack-Python_Rennes.svg[Rejoindre le slack Python Rennes, 
 * https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social]
 --
 
-=== Préambule
+=== Préambule ⚠️ 
 
 image::assets/attention-diapos-techniques.png[Diapos techniques, 70%]
 
 [.medium-text]
-* ⚠️ diapos techniques
-** testcontainers
-** pytest : fixtures, markers
-** Python : gestionnaire de contexte, générateur (yield), architecture
-* démos : https://github.com/lucsorel/members-agenda[members-agenda] (planning de bénévoles gérant les indisponibilités)
+* testcontainers
+* pytest : fixtures, markers ; FastAPI : TestClient
+* Python : gestionnaire de contexte (with...), générateur (yield...), architecture
+
+[.medium-text]
+Démos : https://github.com/lucsorel/members-agenda[members-agenda] (planning de bénévoles gérant les indisponibilités)
 
 [.notes]
 --
@@ -89,7 +109,7 @@ class Event {
   speakers: list[Person]
 }
 class Person {
-  name: str
+  fullname: str
   is_member: bool
 }
 
@@ -160,12 +180,12 @@ Environnement technique :
 +++ tests unitaires
 ++++ faciles
 ++++ rapides
-++++ intérêt métier 😐
+++++ intérêt métier ⭐
 +++ tests de composants
 +++ tests fonctionnels
 ++++ difficiles
 ++++ lents
-++++ intérêt métier 🤓
+++++ intérêt métier 🌟🌟🌟
 +++ (tests de charge)
 @endmindmap
 ----
@@ -200,10 +220,97 @@ _A framework for providing throwaway, lightweight instances of databases, messag
 
 === Principe de fonctionnement
 
-* démarrage du container (+ / - configuré)
-* API pour interagir avec (URL de connexion, identifiants)
-* interactions avec le container (tests)
-* arrêt et suppression du container
+. démarrage du container "vide"
+. création du contexte initial du test
+. déroulé du test
+. assertions sur l'état final
+. arrêt et suppression du container
+
+=== 🧪1 : la "prod"
+
+[source,python]
+----
+from os import getenv
+from fastapi import FastAPI
+from pymysql.connections import Connection, DictCursor
+
+def get_connection() -> Connection:
+    M_HOST = getenv('MYSQL_HOST')
+    M_PORT = int(getenv('MYSQL_PORT'))
+    M_USER = getenv('MEMBERS_AGENDA_USER')
+    M_PWD = getenv('MEMBERS_AGENDA_PASSWORD')
+    M_DB = getenv('MEMBERS_AGENDA_DATABASE')
+
+    return Connection(
+        host=M_HOST, port=M_PORT, user=M_USER, password=M_PWD, database=M_DB
+    )
+
+app = FastAPI()
+
+@app.get('/venues')
+def get_venues() -> list[dict]:
+    get_connection() as connection:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute('SELECT * FROM venues;')
+            return cursor.fetchall()
+        # -> clôture du curseur
+    # -> clôture de la connexion
+----
+
+=== 🧪1 : le test
+
+[source,python]
+----
+from os import environ
+from fastapi.testclient import TestClient
+from testcontainers.mysql import MySqlContainer
+
+from members_agenda_api.__main__ import app, get_connection
+
+def test_get_venues():
+    with MySqlContainer() as container:
+        environ["MYSQL_HOST"] = container.get_container_host_ip()
+        environ["MYSQL_PORT"] = container.get_exposed_port(3306)
+        environ["MEMBERS_AGENDA_USER"] = container.username
+        environ["MEMBERS_AGENDA_PASSWORD"] = container.password
+        environ["MEMBERS_AGENDA_DATABASE"] = container.dbname
+
+        create_2_test_venues(get_connection())
+
+        client = TestClient(app)
+        response = client.get('/venues')
+
+        assert response.status_code == 200
+        venues = response.json()
+        assert len(venues) == 2
+        assert venues[1] == {
+          'id': 2, 'name': 'Goodies', 'rank': 2, 'bg_color_hex': '2D8289'
+        }
+----
+
+=== 🧪1 : le bilan
+
+🤷 ?
+
+=== 🧪1 : le bilan
+
+* c'est lent
+* code d'initialisation du contexte
+* surcharger des variables d'environnement
+** tests fragiles
+** les lire à chaque connexion est contre-intuitif
+
+=== 🧪2 : monkeypatch
+
+== Bonnes pratiques
+
+* localiser l'endroit où la connexion à la base est faite -> facile à monkeypatcher / mocker
+* regrouper les interactions "natives" au service dans une classe (ou dans un module)
+** tester la classe avec testcontainers
+** mocker la classe dans les tests qui l'utilisent indirectement
+* TestClient pour tester une API sans lancer le serveur web (voir https://fastapi.tiangolo.com/tutorial/testing/[testing FastAPI])
+
+== Reste à faire
 
 * architecture d'une base de code
 ** code de prod
@@ -217,7 +324,7 @@ Câblage :
 
 markers pytest
 * pouvoir labelliser des cas de tests (exclusion ou sélection)
-* désélection conditionnel skipif
+* désélection conditionnelle `skipif`
 
 == Conclusions
 
