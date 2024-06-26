@@ -218,6 +218,15 @@ _A framework for providing throwaway, lightweight instances of databases, messag
 * 112 contributeur·ices
 --
 
+=== installation
+
+[source,sh]
+----
+pip install "testcontainers-python[mysql]"
+
+poetry add --group dev "testcontainers-python[mysql]"
+----
+
 === Principe de fonctionnement
 
 . démarrage du container "vide"
@@ -226,12 +235,7 @@ _A framework for providing throwaway, lightweight instances of databases, messag
 . assertions sur l'état final
 . arrêt et suppression du container
 
-[source,sh]
-----
-pip install "testcontainers-python[mysql]"
-----
-
-[.small_text]
+[.small-text]
 Services conteneurisés : https://testcontainers-python.readthedocs.io/en/latest/modules/index.html[testcontainers-python.readthedocs.io/en/latest/modules/index.html].
 
 === 🧪1 : la "prod"
@@ -296,24 +300,31 @@ def test_get_venues():
         }
 ----
 
+=== 🧪1 : le test
+
+[.large-text]
+💻
+
 === 🧪1 : le bilan
 
+[.large-text]
 🤷 ?
 
 === 🧪1 : le bilan
 
+* ça marche
 * c'est lent
 * code d'initialisation du contexte
 * surcharger des variables d'environnement
 ** tests fragiles
 ** les lire à chaque connexion est contre-intuitif
-* tout le code de test est indenté dans le "with MySqlContainer() ..."
+* code de test indenté dans le "with MySqlContainer()..."
 
 == 🐒 monkeypatch
 
 * `fixture` : fonctionnalité ou données de test injectées par pytest
 
-* `monkeypatch` : fixture permettant de modifier (le temps du cas de test) toute propriété d'un objet
+* `monkeypatch` : fixture permettant de modifier toute propriété d'un objet (le temps du cas de test)
 
 * "_In Python, everything is an object_"
 
@@ -386,6 +397,12 @@ def test_get_2_venues_mkp(monkeypatch):
         assert response.status_code == 200
         ...
 ----
+
+=== 🧪2 : monkeypatch
+
+[.large-text]
+💻
+
 === 🧪2 : le bilan
 
 🤷 ?
@@ -490,15 +507,23 @@ from tests.containers.sql_files import SQL_FILES_FOLDER
 
 def test_api_get_venues_fixture(monkeypatch, sql_test_helper: SqlTestHelper):
     sql_test_helper.setup_with_sql_filepath(SQL_FILES_FOLDER / 'venues_samples.sql')
-    monkeypatch.setattr('members_agenda_api.api.get_data_service', lambda: DataService(sql_test_helper.connection))
+
+    monkeypatch.setattr(
+        'members_agenda_api.api.get_data_service',
+        lambda: DataService(sql_test_helper.connection)
+    )
 
     client = TestClient(app)
     response = client.get('/api/venues')
+
     assert response.status_code == 200
     assert len(response.json()) == 2
 ----
 
 === 🧪3 fixture
+
+[.large-text]
+💻
 
 === 🧪3 : le bilan
 
@@ -532,6 +557,11 @@ _"Et que se passe-t-il si on affecte une personne indisponible ?"_ 🤔
 https://tableconvert.com/asciidoc-generator
 --
 
+=== 🧪4 tests paramétrés
+
+[.large-text]
+💻
+
 === 🧪4 : le bilan
 
 🤷 ?
@@ -552,14 +582,81 @@ https://pypi.org/project/pydoctrace/[pypi.org/project/pydoctrace/] : créer des 
 .Voir https://www.youtube.com/watch?v=iRtr9NJJ6Cw[youtu.be/iRtr9NJJ6Cw] : Doc-tracing : fouiller une base de code fossile grâce au traçage d'exécution (BreizhCamp 2023)
 video::iRtr9NJJ6Cw[youtube,width=480,height=260]
 
+=== utilisation classique
+
+[source,python]
+----
+from pydoctrace.doctrace import trace_to_component_puml
+from pydoctrace.callfilter.presets import EXCLUDE_STDLIB_PRESET, Preset
+EXCLUDE_LIBS_PRESET = Preset(...)
+
+class PersonService:
+    @trace_to_component_puml(filter_presets=[EXCLUDE_STDLIB_PRESET, EXCLUDE_LIBS_PRESET])
+    def add_member_to_slot(self, member_id: int, slot_id: int) -> int:
+        ...
+----
+
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml members_agenda_api.services.personservice.add_member_to_slot-component
+skinparam BoxPadding 10
+skinparam componentStyle rectangle
+
+package members_agenda_api {
+  package services {
+    package personservice {
+      frame PersonService {
+        [members_agenda_api.services.personservice.PersonService.add_member_to_slot] as "add_member_to_slot" << @trace_to_component_puml >>
+      }
+    }
+    package dataservice {
+      frame DataService {
+        [members_agenda_api.services.dataservice.DataService.get_person] as "get_person"
+        [members_agenda_api.services.dataservice.DataService._prepared_query] as "_prepared_query"
+        [members_agenda_api.services.dataservice.DataService.get_slot_with_members] as "get_slot_with_members"
+        [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] as "get_active_slots_and_events"
+        [members_agenda_api.services.dataservice.DataService.add_member_to_slot] as "add_member_to_slot"
+        [members_agenda_api.services.dataservice.DataService._prepared_insert] as "_prepared_insert"
+      }
+    }
+  }
+}
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_person] : 1
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_person] : 4
+[members_agenda_api.services.dataservice.DataService.get_person] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 2
+[members_agenda_api.services.dataservice.DataService.get_person] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 3
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 5
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 8
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 6
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 7
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] : 9
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] : 14
+[members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 10, 12
+[members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 11, 13
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.add_member_to_slot] : 15
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.add_member_to_slot] : 18
+[members_agenda_api.services.dataservice.DataService.add_member_to_slot] --> [members_agenda_api.services.dataservice.DataService._prepared_insert] : 16
+[members_agenda_api.services.dataservice.DataService.add_member_to_slot] <.. [members_agenda_api.services.dataservice.DataService._prepared_insert] : 17
+
+footer Generated by //pydoctrace//
+@enduml
+----
+
+=== 🧪5 : doc-tracing
+
+[.large-text]
+💻
+
 === 🧪5 : le bilan
 
 🤷 ?
 
 === 🧪5 : le bilan
 
-* discuter fonctionnalité avec (c6)PO
-* discuter architecture
+* documentation autogénérée
+* discuter fonctionnalités avec votre (c6)PO
+* discuter architecture & implémentation avec l'équipe
 
 === Ça vous _mark_ 1
 
@@ -629,6 +726,8 @@ Ajouter un module :
 * écrire des tests impliquant le conteneur
 
 == 💙💛 Bonnes pratiques
+
+Utilisation astucieuse de concepts avancés de Python : générateurs, gestionnaire de contexte d'exécution
 
 [.medium-text]
 [%step]

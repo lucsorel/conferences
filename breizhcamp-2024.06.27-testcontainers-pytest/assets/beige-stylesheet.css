@@ -319,6 +319,9 @@
 .reveal table tbody td{
   vertical-align: middle;
 }
+.large-text {
+  font-size: 150%;
+}
 .medium-text {
   font-size: 75%;
 }
