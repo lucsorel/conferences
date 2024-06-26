@@ -226,6 +226,14 @@ _A framework for providing throwaway, lightweight instances of databases, messag
 . assertions sur l'état final
 . arrêt et suppression du container
 
+[source,sh]
+----
+pip install "testcontainers-python[mysql]"
+----
+
+[.small_text]
+Services conteneurisés : https://testcontainers-python.readthedocs.io/en/latest/modules/index.html[testcontainers-python.readthedocs.io/en/latest/modules/index.html].
+
 === 🧪1 : la "prod"
 
 [source,python]
@@ -299,7 +307,7 @@ def test_get_venues():
 * surcharger des variables d'environnement
 ** tests fragiles
 ** les lire à chaque connexion est contre-intuitif
-* tout le code de test doit être dans le "with MySqlContainer() ..."
+* tout le code de test est indenté dans le "with MySqlContainer() ..."
 
 == 🐒 monkeypatch
 
@@ -310,6 +318,9 @@ def test_get_venues():
 * "_In Python, everything is an object_"
 
 -> les définitions d'un module peuvent être modifiées à chaud
+
+[.medium-text]
+Doc & tutoriels : https://docs.pytest.org/en/latest/reference/reference.html#monkeypatch[docs.pytest.org/en/latest/reference/reference.html#monkeypatch]
 
 [.notes]
 --
@@ -383,41 +394,255 @@ def test_get_2_venues_mkp(monkeypatch):
 
 * ce qui est monkeypatché n'est pas testé
 * les modifications faites par monkeypatch durent le temps du cas de test
-* cumul des démarrages de conteneurs 🐌
+* cumul des temps de démarrage des conteneurs 🐌
 
-== Bonnes pratiques
+[.columns]
+=== outiller ses tests d'intégration
 
+[.column]
+--
+
+Besoins :
+
+[.medium-text]
+* une fixture injectable dans les cas de test
+* propose une connexion au service conteneurisé
+* propose des fonctionnalités d'initialisation
+* *un* conteneur pour *tous* les tests
+--
+
+[.column]
+--
+[source,python]
+----
+from pathlib import Path
+from typing import NamedTuple
+
+from pymysql.connections import Connection
+
+from tests.containers.sql_queries_parser import (
+    execute_sql_queries
+)
+
+class SqlTestHelper(NamedTuple):
+    connection: Connection
+
+    def setup_with_sql_filepath(self, sql_filepath: Path):
+        """
+        Executes the queries in the given sql file
+        against the database in the connection
+        """
+        with open(
+            sql_filepath, encoding='utf8'
+        ) as sql_file:
+            execute_sql_queries(sql_file, self.connection)
+----
+--
+
+=== tests/conftest.py
+[.notes]
+--
+Module parsé par pytest avant de lancer les cas de tests
+--
+
+[source,python]
+----
+from pymysql.connections import Connection
+from pytest import fixture
+from testcontainers.mysql import MySqlContainer
+from tests.containers.sql_helper import SqlTestHelper
+
+@fixture(scope="session")
+def sql_test_helper() -> SqlTestHelper:
+    db_name = 'members_agenda'
+
+    # Docker container creation
+    with MySqlContainer(
+        image="mysql:8.0",
+        dbname=db_name,
+    ) as sql_container:
+        # database connection (for direct use or monkeypatching in tests)
+        connection = Connection(
+            user = sql_container.username,
+            password = sql_container.password,
+            host = sql_container.get_container_host_ip(),
+            port = int(sql_container.get_exposed_port(sql_container.port)),
+            database = db_name,
+        )
+
+        yield SqlTestHelper(connection)
+
+        # you could write post-tests code here
+----
+
+=== Utiliser la fixture
+
+[source,python]
+----
+from fastapi.testclient import TestClient
+
+from members_agenda_api.__main__ import app
+from members_agenda_api.services.dataservice import DataService
+
+from tests.containers.sql_helper import SqlTestHelper
+from tests.containers.sql_files import SQL_FILES_FOLDER
+
+
+def test_api_get_venues_fixture(monkeypatch, sql_test_helper: SqlTestHelper):
+    sql_test_helper.setup_with_sql_filepath(SQL_FILES_FOLDER / 'venues_samples.sql')
+    monkeypatch.setattr('members_agenda_api.api.get_data_service', lambda: DataService(sql_test_helper.connection))
+
+    client = TestClient(app)
+    response = client.get('/api/venues')
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+----
+
+=== 🧪3 fixture
+
+=== 🧪3 : le bilan
+
+🤷 ?
+
+=== 🧪3 : le bilan
+
+* code de test plus court, désindenté
+* contexte initialisé via un fichier .sql
+
+=== 🧪4 tests paramétrés
+
+_"Qui affecter en bénévole en amphi A, de 10h15 et 12h30 ❓"_
+
+[.small-text]
+--
+[cols="5*", options="header"]
+|===========================================================================================================================================================
+| horaires | accueil~id:1~            | amphi A~id:4~                           | amphi C~id:6~                     | amphi D~id:7~                      
+| 10h15    | slot~id:43~ : Alex~id:7~ | slot~id:44~ : ❓                        |                                   | slot~id:47~ :                      
+| 12h30    |                          | "Testcontainers..."~id:22~ : Luc~id:79~ |                                   | "Manifeste..."~id:45~ : Cécilia~id:25~
+| 12h30    |                          |                                         | slot~id:51~ : Johanna~id:70~      |                                 
+| 13h30    |                          |                                         | "Virus..."~id:39~ : Nailya~id:95~ |                                 
+|===========================================================================================================================================================
+--
+
+_"Et que se passe-t-il si on affecte une personne indisponible ?"_ 🤔
+
+[.notes]
+--
+https://tableconvert.com/asciidoc-generator
+--
+
+=== 🧪4 : le bilan
+
+🤷 ?
+
+=== 🧪4 : le bilan
+
+* temps de création d'un seul conteneur
+* un seul code de test -> plein de cas
+* documentation des entrées-sorties
+* documentation cas droits / cas d'erreurs
+
+== Les bonus
+
+=== Traçage documentaire
+
+https://pypi.org/project/pydoctrace/[pypi.org/project/pydoctrace/] : créer des diagrammes (séquence, composants) d'exécution d'une fonction via un décorateur.
+
+.Voir https://www.youtube.com/watch?v=iRtr9NJJ6Cw[youtu.be/iRtr9NJJ6Cw] : Doc-tracing : fouiller une base de code fossile grâce au traçage d'exécution (BreizhCamp 2023)
+video::iRtr9NJJ6Cw[youtube,width=480,height=260]
+
+=== 🧪5 : le bilan
+
+🤷 ?
+
+=== 🧪5 : le bilan
+
+* discuter fonctionnalité avec (c6)PO
+* discuter architecture
+
+=== Ça vous _mark_ 1
+
+Pour labelliser des tests à dé·sélectionner :
+
+. déclarer le label dans `pyproject.toml`
+. dé·sélectionner les tests avec `pytest -m ...`
+
+[source,toml]
+----
+[tool.pytest.ini_options]
+addopts = "--strict-markers"
+markers = [
+    "containers: integration tests requiring docker test containers",
+]
+----
+
+[source,sh]
+----
+pytest -m "containers"
+pytest -m "not containers"
+----
+
+=== Ça vous _mark_ 2
+
+Désélection conditionnelle (dans `tests/conftest.py`)
+
+[source,python]
+----
+from subprocess import run
+from pytest import mark
+
+def _is_docker_available() -> bool:
+    is_docker_installed_process = run(("which", "docker"), capture_output=True)
+    if is_docker_installed_process.returncode != 0:
+        return False
+
+    is_docker_running_process = run(("docker", "ps"), capture_output=True)
+    return is_docker_running_process.returncode == 0
+
+# déclaration programmatique du marker
+mark.skipifnodocker = mark.skipif(
+    not _is_docker_available(), reason="Requires docker to spin a container"
+)
+----
+
+[source,python]
+----
+
+@mark.containers
+@mark.skipifnodocker
+def test_dataservice_get_venues(monkeypatch, sql_test_helper: SqlTestHelper):
+    sql_test_helper.setup_with_sql_filepath(SQL_FILES_FOLDER / 'venues_samples.sql')
+    ...
+----
+
+=== Contribuer
+
+Voir https://github.com/testcontainers/testcontainers-python/pull/413[github.com/testcontainers/testcontainers-python/pull/413] :
+
+Ajouter un module :
+
+* image Docker par défaut
+* méthodes :
+** `start()`
+** `_health_check()` : informe du démarrage et de la disponibilité du conteneur
+* écrire des tests impliquant le conteneur
+
+== 💙💛 Bonnes pratiques
+
+[.medium-text]
+[%step]
 * localiser l'endroit où la connexion à la base est faite -> facile à monkeypatcher / mocker
 * regrouper les interactions "natives" au service dans une classe (ou dans un module)
 ** tester la classe avec testcontainers
 ** mocker la classe dans les tests qui l'utilisent indirectement
+* nettoyer le conteneur avant la création du contexte
 * TestClient pour tester une API sans lancer le serveur web (voir https://fastapi.tiangolo.com/tutorial/testing/[testing FastAPI])
-
-== Reste à faire
-
-* architecture d'une base de code
-** code de prod
-** code de test
-** conftest
-** fixture
-
-Câblage :
-** par variable d'environnements (peu intrusif ; /!\ si elles sont renommées)
-** monkeypatching (intrusion localisée - avec les bons outils)
-
-markers pytest
-* pouvoir labelliser des cas de tests (exclusion ou sélection)
-* désélection conditionnelle `skipif`
-
-== Conclusions
-
-* motivations & approches de test
-* lancer un service conteneurisé dédié aux tests
-* utiliser testcontainers au sein d'une session de tests pytest
-* générer de la documentation fonctionnalité-architecture
+* tester les cas droits et d'erreur
+* rappeler la valeur documentaire des tests
 
 [.columns]
-== Merci 🙏
+=== Merci 🙏
 
 [.column]
 --
@@ -434,5 +659,3 @@ Présentation à retrouver sur https://github.com/lucsorel/conferences/tree/main
 .Vos retours sur https://openfeedback.io/LyIREj0UbxmZ6vcFmxmN/2024-06-27/670894[openfeedback.io/LyIREj0UbxmZ6vcFmxmN/2024-06-27/670894]
 image::assets/openfeedback-testcontainers.svg[Vos retours sur openfeedback, 75%]
 --
-
-
