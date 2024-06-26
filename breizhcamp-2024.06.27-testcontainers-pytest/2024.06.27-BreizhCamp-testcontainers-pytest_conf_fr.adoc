@@ -397,7 +397,7 @@ def test_get_2_venues_mkp(monkeypatch):
 * cumul des temps de démarrage des conteneurs 🐌
 
 [.columns]
-=== outiller ses tests d'intégration
+== outiller ses tests d'intégration
 
 [.column]
 --
@@ -509,7 +509,7 @@ def test_api_get_venues_fixture(monkeypatch, sql_test_helper: SqlTestHelper):
 * code de test plus court, désindenté
 * contexte initialisé via un fichier .sql
 
-=== 🧪4 tests paramétrés
+== 🧪4 tests paramétrés
 
 _"Qui affecter en bénévole en amphi A, de 10h15 et 12h30 ❓"_
 
