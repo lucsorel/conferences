@@ -4,7 +4,7 @@
 
 link:2023.06.29-BreizhCamp-doc-tracing_quicky_fr.adoc[2023.06.29-BreizhCamp-doc-tracing_quicky_fr.adoc], _quicky_ given during of the https://www.breizhcamp.org/[BreizhCamp] 2023 edition (Brittany, France, 🇫🇷French contents).
 Pdf version: link:2023.06.29-BreizhCamp-doc-tracing_quicky_fr.pdf[2023.06.29-BreizhCamp-doc-tracing_quicky_fr.pdf].
-Replay of the video: https://www.youtube.com/watch?v=l0HrTE45RVM.
+Replay of the video: https://www.youtube.com/watch?v=iRtr9NJJ6Cw.
 
 == View the slideshows
 
