@@ -29,5 +29,5 @@ or :
 
 == Code examples
 
-This repository involves code samples from a real-life project: https://github.com/lucsorel/members-agenda[members-agenda].
-The project's documentation explains how to install and run the web server (https://github.com/lucsorel/members-agenda/tree/main/members-agenda-api[members-agenda-api]), involved in the demos of this conference.
+This repository involves code samples from a real-life project: https://github.com/lucsorel/members-agenda/tree/0.1.0[members-agenda].
+The project's documentation explains how to install and run the web server (https://github.com/lucsorel/members-agenda/tree/0.1.0/members-agenda-api[members-agenda-api]), involved in the demos of this conference.

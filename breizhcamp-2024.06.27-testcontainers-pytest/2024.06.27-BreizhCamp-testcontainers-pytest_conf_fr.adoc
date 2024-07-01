@@ -75,12 +75,7 @@ image::assets/attention-diapos-techniques.png[Diapos techniques, 70%]
 * Python : gestionnaire de contexte (with...), générateur (yield...), architecture
 
 [.medium-text]
-Démos : https://github.com/lucsorel/members-agenda[members-agenda] (planning de bénévoles gérant les indisponibilités)
-
-[.notes]
---
-https://youtu.be/6TfHqrWejdo?feature=shared&t=46[Star Wars: Return of the Jedi - Rebel Briefing]
---
+Démos : https://github.com/lucsorel/members-agenda/tree/0.1.0[members-agenda] (planning de bénévoles gérant les indisponibilités)
 
 [.columns]
 === members-agenda
@@ -135,7 +130,6 @@ Environnement technique :
 * base de données : MySQL (avec https://pymysql.readthedocs.io/en/latest/index.html[pymysql])
 * framework de test : https://docs.pytest.org/en/stable/[pytest]
 --
-
 
 == Pourquoi tester ?
 
