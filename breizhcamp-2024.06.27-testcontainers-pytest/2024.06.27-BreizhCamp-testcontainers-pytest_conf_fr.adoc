@@ -261,7 +261,7 @@ app = FastAPI()
 
 @app.get('/venues')
 def get_venues() -> list[dict]:
-    get_connection() as connection:
+    with get_connection() as connection:
         with connection.cursor(DictCursor) as cursor:
             cursor.execute('SELECT * FROM venues;')
             return cursor.fetchall()
@@ -305,6 +305,12 @@ def test_get_venues():
 [.large-text]
 💻
 
+[source,sh]
+----
+cd members-agenda-api
+poetry run pytest -v -k test_get_2_venues_envvars
+----
+
 === 🧪1 : le bilan
 
 [.large-text]
@@ -315,7 +321,7 @@ def test_get_venues():
 * ça marche
 * c'est lent
 * code d'initialisation du contexte
-* surcharger des variables d'environnement
+* tester en surchargeant des variables d'environnement ?
 ** tests fragiles
 ** les lire à chaque connexion est contre-intuitif
 * code de test indenté dans le "with MySqlContainer()..."
@@ -349,7 +355,7 @@ C'est pour ça :
 === 🐒 monkeypatch
 
 [.medium-text]
-Dans `test_get_venues.py`, quelle définition de module faut-il modifier ?
+Dans `test_get_venues.py`, quelle entrée de module faut-il modifier ?
 
 [source,text]
 ----
@@ -365,6 +371,12 @@ members_agenda_api/
  │  ├─ test_get_venues.py  # TestClient(app) ; 🐒 ?
  ...
 ----
+
+[.notes]
+--
+-> il faut monkeypatcher l'import utilisé par le code testé.
+Si on monkeypatche la définition, on la monkeypatche après qu'elle ait été importée dans le code testé et c'est sans effet.
+--
 
 === 🧪2 monkeypatch
 
@@ -403,6 +415,10 @@ def test_get_2_venues_mkp(monkeypatch):
 [.large-text]
 💻
 
+[source,sh]
+----
+poetry run pytest -v -k test_get_2_venues_mkp
+----
 === 🧪2 : le bilan
 
 🤷 ?
@@ -410,8 +426,15 @@ def test_get_2_venues_mkp(monkeypatch):
 === 🧪2 : le bilan
 
 * ce qui est monkeypatché n'est pas testé
-* les modifications faites par monkeypatch durent le temps du cas de test
+* les modifications faites par monkeypatch ne durent que le temps du cas de test
 * cumul des temps de démarrage des conteneurs 🐌
+
+[source,sh]
+----
+poetry run pytest -v tests/members_agenda_api/test_1_get_venues_envvars.py \
+    tests/members_agenda_api/test_2_get_venues_mkp.py
+----
+
 
 [.columns]
 == outiller ses tests d'intégration
@@ -525,6 +548,11 @@ def test_api_get_venues_fixture(monkeypatch, sql_test_helper: SqlTestHelper):
 [.large-text]
 💻
 
+[source,sh]
+----
+poetry run pytest -v -k test_get_venues_fixture
+----
+
 === 🧪3 : le bilan
 
 🤷 ?
@@ -543,10 +571,10 @@ _"Qui affecter en bénévole en amphi A, de 10h15 et 12h30 ❓"_
 [cols="5*", options="header"]
 |===========================================================================================================================================================
 | horaires | accueil~id:1~            | amphi A~id:4~                           | amphi C~id:6~                     | amphi D~id:7~                      
-| 10h15    | slot~id:43~ : Alex~id:7~ | slot~id:44~ : ❓                        |                                   | slot~id:47~ :                      
-| 12h30    |                          | "Testcontainers..."~id:22~ : Luc~id:79~ |                                   | "Manifeste..."~id:45~ : Cécilia~id:25~
-| 12h30    |                          |                                         | slot~id:51~ : Johanna~id:70~      |                                 
-| 13h30    |                          |                                         | "Virus..."~id:39~ : Nailya~id:95~ |                                 
+| de 10h15 | slot~id:43~ : Alex~id:7~ | slot~id:44~ : ❓                        |                                   | slot~id:47~ :                      
+| à 12h30  |                          | "Testcontainers..."~id:22~ : Luc~id:79~ |                                   | "Manifeste..."~id:45~ : Cécilia~id:25~
+| de 12h30 |                          |                                         | slot~id:51~ : Johanna~id:70~      |                                 
+| à 13h30  |                          |                                         | "Virus..."~id:39~ : Nailya~id:95~ |                                 
 |===========================================================================================================================================================
 --
 
@@ -561,6 +589,15 @@ https://tableconvert.com/asciidoc-generator
 
 [.large-text]
 💻
+
+[source,sh]
+----
+# test cas droit non paramétré
+poetry run pytest -v -k test_add_member_to_slot_fixture
+
+# tests paramétrés des cas droits et d'erreur
+poetry run pytest -v -k test_add_member_to_slot_params
+----
 
 === 🧪4 : le bilan
 
@@ -582,7 +619,7 @@ https://pypi.org/project/pydoctrace/[pypi.org/project/pydoctrace/] : créer des 
 .Voir https://www.youtube.com/watch?v=iRtr9NJJ6Cw[youtu.be/iRtr9NJJ6Cw] : Doc-tracing : fouiller une base de code fossile grâce au traçage d'exécution (BreizhCamp 2023)
 video::iRtr9NJJ6Cw[youtube,width=480,height=260]
 
-=== utilisation classique
+=== mode "décorateur"
 
 [source,python]
 ----
@@ -645,8 +682,267 @@ footer Generated by //pydoctrace//
 
 === 🧪5 : doc-tracing
 
+Décoration "impérative" :
+
+[source,python]
+----
+from pydoctrace.doctrace import trace_to_component_puml
+from members_agenda_api.services.personservice import PersonService
+
+def test_add_member_to_slot_doctrace(...):
+    # 1. création de la méthode documentante par décoration
+    traceable_add_member_to_slot = trace_to_component_puml(
+        ...
+    )(PersonService.add_member_to_slot)
+
+    # 2. affectation de la méthode décorée par monkeypatching
+    monkeypatch.setattr(
+        'members_agenda_api.services.personservice.PersonService.add_member_to_slot',
+        traceable_add_member_to_slot
+    )
+----
+
 [.large-text]
 💻
+
+[source,sh]
+----
+# tests paramétrés et documentaires des cas droits et d'erreur
+poetry run pytest -v -k test_add_member_to_slot_doctrace
+----
+
+=== 201 "insertion"
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml members_agenda_api.services.personservice.add_member_to_slot-component
+skinparam BoxPadding 10
+skinparam componentStyle rectangle
+
+package members_agenda_api {
+  package services {
+    package personservice {
+      frame PersonService {
+        [members_agenda_api.services.personservice.PersonService.add_member_to_slot] as "add_member_to_slot" << @trace_to_component_puml >>
+      }
+    }
+    package dataservice {
+      frame DataService {
+        [members_agenda_api.services.dataservice.DataService.get_person] as "get_person"
+        [members_agenda_api.services.dataservice.DataService._prepared_query] as "_prepared_query"
+        [members_agenda_api.services.dataservice.DataService.get_slot_with_members] as "get_slot_with_members"
+        [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] as "get_active_slots_and_events"
+        [members_agenda_api.services.dataservice.DataService.add_member_to_slot] as "add_member_to_slot"
+        [members_agenda_api.services.dataservice.DataService._prepared_insert] as "_prepared_insert"
+      }
+    }
+  }
+}
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_person] : 1
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_person] : 4
+[members_agenda_api.services.dataservice.DataService.get_person] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 2
+[members_agenda_api.services.dataservice.DataService.get_person] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 3
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 5
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 8
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 6
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 7
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] : 9
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] : 14
+[members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 10, 12
+[members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 11, 13
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.add_member_to_slot] : 15
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.add_member_to_slot] : 18
+[members_agenda_api.services.dataservice.DataService.add_member_to_slot] --> [members_agenda_api.services.dataservice.DataService._prepared_insert] : 16
+[members_agenda_api.services.dataservice.DataService.add_member_to_slot] <.. [members_agenda_api.services.dataservice.DataService._prepared_insert] : 17
+
+footer Generated by //pydoctrace//
+@enduml
+----
+
+=== 200 "existe déjà"
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml members_agenda_api.services.personservice.add_member_to_slot-component
+skinparam BoxPadding 10
+skinparam componentStyle rectangle
+
+package members_agenda_api {
+  package services {
+    package personservice {
+      frame PersonService {
+        [members_agenda_api.services.personservice.PersonService.add_member_to_slot] as "add_member_to_slot" << @trace_to_component_puml >>
+      }
+    }
+    package dataservice {
+      frame DataService {
+        [members_agenda_api.services.dataservice.DataService.get_person] as "get_person"
+        [members_agenda_api.services.dataservice.DataService._prepared_query] as "_prepared_query"
+        [members_agenda_api.services.dataservice.DataService.get_slot_with_members] as "get_slot_with_members"
+      }
+    }
+  }
+}
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_person] : 1
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_person] : 4
+[members_agenda_api.services.dataservice.DataService.get_person] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 2
+[members_agenda_api.services.dataservice.DataService.get_person] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 3
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 5
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 8
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 6
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 7
+
+footer Generated by //pydoctrace//
+@enduml
+----
+
+=== 404 "slot"
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml members_agenda_api.services.personservice.add_member_to_slot-component
+skinparam BoxPadding 10
+skinparam componentStyle rectangle
+
+rectangle None #line:transparent;text:transparent {
+  package members_agenda_api {
+    package services {
+      package personservice {
+        frame PersonService {
+          label members_agenda_api.services.personservice.PersonService.HTTPException as " "
+          [members_agenda_api.services.personservice.PersonService.add_member_to_slot] as "add_member_to_slot" << @trace_to_component_puml >>
+        }
+      }
+      package dataservice {
+        frame DataService {
+          [members_agenda_api.services.dataservice.DataService.get_person] as "get_person"
+          [members_agenda_api.services.dataservice.DataService._prepared_query] as "_prepared_query"
+          [members_agenda_api.services.dataservice.DataService.get_slot_with_members] as "get_slot_with_members"
+        }
+      }
+    }
+  }
+  package fastapi.exceptions {
+    frame HTTPException {
+      [fastapi.exceptions.HTTPException.~__init~__] as "~__init~__"
+    }
+  }
+}
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] .d.> members_agenda_api.services.personservice.PersonService.HTTPException #line:darkred;text:darkred : HTTPException
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_person] : 1
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_person] : 4
+[members_agenda_api.services.dataservice.DataService.get_person] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 2
+[members_agenda_api.services.dataservice.DataService.get_person] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 3
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 5
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 8
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] -d-> [members_agenda_api.services.dataservice.DataService._prepared_query] : 6
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 7
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [fastapi.exceptions.HTTPException.~__init~__] : 9
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [fastapi.exceptions.HTTPException.~__init~__] : 10
+
+footer Generated by //pydoctrace//
+@enduml
+----
+
+=== 405 "non membre"
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml members_agenda_api.services.personservice.add_member_to_slot-component
+skinparam BoxPadding 10
+skinparam componentStyle rectangle
+
+rectangle None #line:transparent;text:transparent {
+  package members_agenda_api {
+    package services {
+      package personservice {
+        frame PersonService {
+          label members_agenda_api.services.personservice.PersonService.HTTPException as " "
+          [members_agenda_api.services.personservice.PersonService.add_member_to_slot] as "add_member_to_slot" << @trace_to_component_puml >>
+        }
+      }
+      package dataservice {
+        frame DataService {
+          [members_agenda_api.services.dataservice.DataService.get_person] as "get_person"
+          [members_agenda_api.services.dataservice.DataService._prepared_query] as "_prepared_query"
+        }
+      }
+    }
+  }
+  package fastapi.exceptions {
+    frame HTTPException {
+      [fastapi.exceptions.HTTPException.~__init~__] as "~__init~__"
+    }
+  }
+}
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] .up.> members_agenda_api.services.personservice.PersonService.HTTPException #line:darkred;text:darkred : HTTPException
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_person] : 1
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_person] : 4
+[members_agenda_api.services.dataservice.DataService.get_person] -left-> [members_agenda_api.services.dataservice.DataService._prepared_query] : 2
+[members_agenda_api.services.dataservice.DataService.get_person] <. [members_agenda_api.services.dataservice.DataService._prepared_query] : 3
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [fastapi.exceptions.HTTPException.~__init~__] : 5
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [fastapi.exceptions.HTTPException.~__init~__] : 6
+
+footer Generated by //pydoctrace//
+@enduml
+----
+
+=== 500 "indispo"
+
+[plantuml, target=component-diagram, format=svg]
+----
+@startuml members_agenda_api.services.personservice.add_member_to_slot-component
+skinparam BoxPadding 10
+skinparam componentStyle rectangle
+
+rectangle None #line:transparent;text:transparent {
+  package members_agenda_api {
+    package services {
+      package personservice {
+        frame PersonService {
+          [members_agenda_api.services.personservice.PersonService.add_member_to_slot] as "add_member_to_slot" << @trace_to_component_puml >>
+        }
+      }
+      package dataservice {
+        frame DataService {
+          [members_agenda_api.services.dataservice.DataService.get_person] as "get_person"
+          [members_agenda_api.services.dataservice.DataService._prepared_query] as "_prepared_query"
+          [members_agenda_api.services.dataservice.DataService.get_slot_with_members] as "get_slot_with_members"
+          [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] as "get_active_slots_and_events"
+        }
+      }
+    }
+  }
+  package fastapi {
+    frame encoders {
+      [fastapi.encoders.jsonable_encoder] as "jsonable_encoder"
+    }
+    frame _compat {
+      [fastapi._compat._model_dump] as "_model_dump"
+    }
+  }
+}
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_person] : 1
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_person] : 4
+[members_agenda_api.services.dataservice.DataService.get_person] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 2
+[members_agenda_api.services.dataservice.DataService.get_person] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 3
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 5
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_slot_with_members] : 8
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 6
+[members_agenda_api.services.dataservice.DataService.get_slot_with_members] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 7
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] : 9
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] : 14
+[members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] --> [members_agenda_api.services.dataservice.DataService._prepared_query] : 10, 12
+[members_agenda_api.services.dataservice.DataService.get_active_slots_and_events] <.. [members_agenda_api.services.dataservice.DataService._prepared_query] : 11, 13
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] -> [fastapi.encoders.jsonable_encoder] : 15
+[members_agenda_api.services.personservice.PersonService.add_member_to_slot] <. [fastapi.encoders.jsonable_encoder] : 58
+[fastapi.encoders.jsonable_encoder] -d-> [fastapi._compat._model_dump] : 16
+[fastapi.encoders.jsonable_encoder] <. [fastapi._compat._model_dump] : 17
+[fastapi.encoders.jsonable_encoder] -> [fastapi.encoders.jsonable_encoder] : 18, 19, 21 ... 49, 53, 55
+
+footer Generated by //pydoctrace//
+@enduml
+----
 
 === 🧪5 : le bilan
 
@@ -655,8 +951,9 @@ footer Generated by //pydoctrace//
 === 🧪5 : le bilan
 
 * documentation autogénérée
-* discuter fonctionnalités avec votre (c6)PO
-* discuter architecture & implémentation avec l'équipe
+* pour discuter :
+** architecture & implémentation avec l'équipe
+** fonctionnalités avec votre PO
 
 === Ça vous _mark_ 1
 
@@ -730,7 +1027,7 @@ Ajouter un module :
 Utilisation astucieuse de concepts avancés de Python : générateurs, gestionnaire de contexte d'exécution
 
 [.medium-text]
-[%step]
+// [%step]
 * localiser l'endroit où la connexion à la base est faite -> facile à monkeypatcher / mocker
 * regrouper les interactions "natives" au service dans une classe (ou dans un module)
 ** tester la classe avec testcontainers
