@@ -651,7 +651,7 @@ Issues et ⭐ : https://github.com/lucsorel/pydoctrace[github.com/lucsorel/pydoc
 Des questions ?
 
 [.medium-text]
-Présentation à retrouver sur https://github.com/lucsorel/doc-tracing[github.com/lucsorel/doc-tracing] 📑
+Présentation à retrouver sur https://github.com/lucsorel/conferences/tree/main/breizhcamp-2023.06.29-doc-tracing[github.com/lucsorel/conferences/{...}/breizhcamp-2023.06.29-doc-tracing] 📑
 
 === Rejoignez Python Rennes !
 

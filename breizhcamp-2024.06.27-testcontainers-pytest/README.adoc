@@ -1,0 +1,35 @@
+= Testcontainers & pytest
+
+== Slideshows
+
+link:2024.06.27-BreizhCamp-testcontainers-pytest_conf_fr.adoc[2024.06.27-BreizhCamp-testcontainers-pytest_conf_fr.adoc], _conference_ given during of the https://www.breizhcamp.org/[BreizhCamp] 2024 edition (Brittany, France, 🇫🇷French contents).
+Pdf export: link:2024.06.27-BreizhCamp-testcontainers-pytest_conf_fr.pdf[2024.06.27-BreizhCamp-testcontainers-pytest_conf_fr.pdf].
+Replay of the video: `Coming soon`.
+
+This conference uses tag `0.1.0` of the https://github.com/lucsorel/members-agenda/tree/0.1.0[members-agenda] project for the demos.
+
+== View the slideshows
+
+The slideshows were designed to be displayed using the https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] extension for Codium / vsCode.
+
+. display the commands with `ctrl shift p`
+. use the `Asciidoc Slides: Open Slides in Browser` command
+. type `s` to launch the presenter mode
+
+Documentation about the https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[Asciidoc syntax for slideshows].
+
+== Export as a PDF file
+
+. use the `Asciidoc Slides: Export document as PDF` command (it does not always work)
+
+or :
+
+. open the slideshow with chromium or chrome
+. add `?print-pdf` at the end of the URL
+. print as a PDF with `ctrl p` ou `cmd p`
+
+
+== Code examples
+
+This repository involves code samples from a real-life project: https://github.com/lucsorel/members-agenda/tree/0.1.0[members-agenda].
+The project's documentation explains how to install and run the web server (https://github.com/lucsorel/members-agenda/tree/0.1.0/members-agenda-api[members-agenda-api]), involved in the demos of this conference.

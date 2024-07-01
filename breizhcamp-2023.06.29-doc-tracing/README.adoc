@@ -4,7 +4,7 @@
 
 link:2023.06.29-BreizhCamp-doc-tracing_quicky_fr.adoc[2023.06.29-BreizhCamp-doc-tracing_quicky_fr.adoc], _quicky_ given during of the https://www.breizhcamp.org/[BreizhCamp] 2023 edition (Brittany, France, 🇫🇷French contents).
 Pdf version: link:2023.06.29-BreizhCamp-doc-tracing_quicky_fr.pdf[2023.06.29-BreizhCamp-doc-tracing_quicky_fr.pdf].
-Replay of the video: https://www.youtube.com/watch?v=l0HrTE45RVM.
+Replay of the video: https://www.youtube.com/watch?v=iRtr9NJJ6Cw.
 
 == View the slideshows
 
@@ -12,6 +12,7 @@ The slideshows were designed to be displayed using the https://marketplace.visua
 
 . display the commands with `ctrl shift p`
 . use the `Asciidoc Slides: Open Slides in Browser` command
+. appuyer sur `s` pour lancer le presenter mode
 
 Documentation about the https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[Asciidoc syntax for slideshows].
 

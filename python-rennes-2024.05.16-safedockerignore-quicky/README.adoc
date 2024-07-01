@@ -6,6 +6,7 @@ La présentation a été écrite pour être visualisée à travers l'extension h
 
 . affichez la palette de commandes avec `ctrl shift p`
 . utilisez la commande `Asciidoc Slides: Open Slides in Browser`
+. appuyer sur `s` pour lancer le presenter mode
 
 Documentation de la https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[syntaxe asciidoc pour les présentations].
 

@@ -1,0 +1,33 @@
+
+@import url("beige-stylesheet.css");
+
+/* Polices de caractères : https://fontmeme.com/polices/police-star-jedi/ */
+@font-face {
+    font-family:"splashscreen_hollow";
+    src: url("Starjhol.ttf") format("truetype");
+}
+@font-face {
+    font-family:"splashscreen_title";
+    src: url("Starjhol.ttf") format("truetype");
+}
+
+.splashscreen-title {
+    font-family: "splashscreen_hollow";
+    word-spacing: 400%;
+    letter-spacing: .1rem;
+    font-size: 170%;
+    background-color: black;
+    border: #4B8BBE solid 3px;
+    color: #feda4a;
+    margin: 50px 20px;
+}
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+    font-family: "splashscreen_title";
+    font-size: 170%;
+    word-spacing: 150%;
+    letter-spacing: .2rem;
+    color: black;
+}
+.reveal h2, .reveal h3, .reveal h4 {
+    text-shadow: -1px -1px black;
+}

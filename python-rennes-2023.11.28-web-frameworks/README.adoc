@@ -11,6 +11,7 @@ Ce diaporama d'actualités a été conçu pour être présenté dans un navigate
 . ouvrez le fichier `.adoc` dans Codium / vsCode
 . affichez l'invite commandes avec `ctrl shift p`
 . sélectionnez la commande `Asciidoc Slides: Open Slides in Browser`
+. appuyer sur `s` pour lancer le presenter mode
 
 Pour exporter le diaporama en pdf :
 
