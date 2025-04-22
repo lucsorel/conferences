@@ -1,0 +1,28 @@
+= Fantastic bits - jeudi 5 décembre 2024
+
+Un export pdf des actualités est disponible dans ce repo : link:2025.05.22-documentation-quoi_de_noeuf.pdf[2025.05.22-documentation-quoi_de_noeuf.pdf] (source : link:2025.05.22-documentation-quoi_de_noeuf.adoc[2025.05.22-documentation-quoi_de_noeuf.adoc]).
+
+Repos et présentations des personnes intervenantes :
+
+* **Florian Strzelecki** : Documentation : trouver son style.
+
+== Voir les diaporamas
+
+La présentation a été écrite pour être visualisée à travers l'extension https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] pour Codium / vsCode.
+
+. affichez la palette de commandes avec `ctrl shift p`
+. utilisez la commande `Asciidoc Slides: Open Slides in Browser`
+. appuyer sur `s` pour lancer le presenter mode
+
+Documentation de la https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[syntaxe asciidoc pour les présentations].
+
+Pour générer un pdf :
+
+. utilisez la commande `Asciidoc Slides: Export document as PDF` (ne fonctionne pas toujours)
+
+ou :
+
+. ouvrir la présentation dans le navigateur chromium / chrome
+. rajouter `?print-pdf` à la fin de l'URL
+. lancer l'impression en pdf avec `ctrl p` ou `cmd p`
+
