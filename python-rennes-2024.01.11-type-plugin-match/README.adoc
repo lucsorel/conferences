@@ -1,6 +1,6 @@
 
 .Rediffusion vidéo : https://www.youtube.com/watch?v=qAS-zj0irEM
-video::qAS-zj0irEM[youtube,width=480,height=360]
+image::assets/python-rennes-2024.01.11-type-plugin-match.webp[width="50%",link="https://www.youtube.com/watch?v=qAS-zj0irEM"]
 
 == Actualités
 

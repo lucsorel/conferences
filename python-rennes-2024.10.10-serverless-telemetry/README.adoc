@@ -8,6 +8,9 @@ Repos et présentations des personnes intervenantes :
 * https://github.com/webscit/opentelemetry-demo-python
 * https://github.com/christopherlouet/meetup-python-prom
 
+.Rediffusion vidéo : https://www.youtube.com/watch?v=FVLdaqFLMs0
+image::assets/2024.10.10-chalice_opentelemetry.png[width="50%",link="https://www.youtube.com/watch?v=FVLdaqFLMs0"]
+
 == Voir les diaporamas
 
 La présentation a été écrite pour être visualisée à travers l'extension https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] pour Codium / vsCode.

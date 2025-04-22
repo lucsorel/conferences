@@ -6,6 +6,9 @@ Repos et présentations des personnes intervenantes :
 
 * **Michel Caradec** : Python benchmarking & profiling. Supports sur https://gitlab.com/reech-oss/meetup/meetup-python-rennes-profiling.
 
+.Rediffusion vidéo : https://www.youtube.com/watch?v=eY5k9GcHRVM
+image::assets/2024.12.05-fantastic_bits.webp[width="50%",link="https://www.youtube.com/watch?v=eY5k9GcHRVM"]
+
 == Voir les diaporamas
 
 La présentation a été écrite pour être visualisée à travers l'extension https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] pour Codium / vsCode.
