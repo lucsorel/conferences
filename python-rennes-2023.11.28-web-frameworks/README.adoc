@@ -1,6 +1,6 @@
 
 .Rediffusion vidéo : https://www.youtube.com/watch?v=yspHNEFjKfQ
-video::yspHNEFjKfQ[youtube,width=480,height=360]
+image::assets/2023.11.28-frameworks_web_python.webp[width="50%",link="https://www.youtube.com/watch?v=yspHNEFjKfQ"]
 
 == Actualités
 

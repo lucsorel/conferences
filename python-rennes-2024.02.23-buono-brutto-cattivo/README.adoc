@@ -1,6 +1,6 @@
 
 .Rediffusion vidéo : https://www.youtube.com/watch?v=E_cyCjovLMM
-video::E_cyCjovLMM[youtube,width=480,height=360]
+image::assets/2024.02.23-python-il-buono-il-brutto-il-cattivo.webp[width="50%",link="https://www.youtube.com/watch?v=E_cyCjovLMM"]
 
 == Actualités
 
