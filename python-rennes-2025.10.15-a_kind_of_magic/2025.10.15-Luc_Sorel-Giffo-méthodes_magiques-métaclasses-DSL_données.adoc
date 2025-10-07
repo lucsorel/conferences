@@ -1,0 +1,104 @@
+:revealjs_customtheme: assets/beige-stylesheet.css
+:revealjs_progress: true
+:revealjs_slideNumber: true
+:source-highlighter: highlightjs
+:icons: font
+:toc:
+
+= Méthodes magiques, métaclasses, DSL de parcours de données
+
+== Découverte des méthodes magiques et des métaclasses pour construire une syntaxe de parcours de données
+
+image:assets/2025.10.15-python_rennes-a_kind_of_magic.png[bannière - a kind of magic,60%]
+
+[.medium-text]
+*Luc Sorel-Giffo* -- mercredi 15 octobre 2025 -- Hellowork
+
+[.small-text]
+https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social] (tech-lead full-stack chez https://www.seeyousun.fr[See you sun] 🌞⚡)
+
+=== Au programme
+
+Retour d'expérience sur l'élaboration d'une syntaxe de parcours de données : https://github.com/lucsorel/datawalk[github.com/lucsorel/datawalk] (TODO publier sur pypi)
+
+* découverte non-maîtrisée de sujets "bas niveau"
+** méthodes magiques
+** métaclasse
+* détourer ces notions pour vous donner des idées
+
+== Pourquoi ?
+
+[.medium-text]
+Génération d'un rapport de synthèse des ratios de déformation à partir d'une application de génie civil produisant un dictionnaire arborescent de résultats de calcul dont la structure est amenée à évoluer vite.
+
+[source,javascript]
+----
+{
+    élément: {
+        type: "",
+        matériau: {...},
+        forme: {...},
+        vérifications: [
+            {contraintes: [...], déformations: {cisaillement: 0.15, torsion: 0,32}},
+            // ...
+        ]
+    },
+    // ...
+}
+----
+
+
+[source,python]
+----
+vérifications = results['poteau']['vérifications']
+vérification = next(
+    vérification for vérification in vérifications
+    if "tempête" in verification
+) 
+cisaillement = vérification['déformations']['cisaillement']
+----
+
+=== Motivations
+
+* élaborer une syntaxe expressive pour récupérer les données ("structure arborescente")
+* décoreller l'algorithmie structurant le rapport de la recherche de données ("structure évolutive")
+** -> message d'erreur expressif si le chemin d'accès au données casse
+
+=== Inspiration : pathlib.Path
+
+[source,python]
+----
+from os import path
+from pathlib import Path
+
+schemas_folder = path.join(path.dirname(path.dirname(__file__)), 'schemas')
+if path.isdir(schemas_folder):
+    print(f'{schemas_folder} exists')
+
+schemas_path = Path(__file__).parent.parent / 'schemas'
+if schemas_path.is_dir():
+    print(f'{schemas_folder} exists')
+----
+
+Division d'une instance de Path par une chaîne de caractères... 🤔
+
+== Méthodes spéciales
+
+Vous en écrivez déjà régulièrement, vous ne les appelez (presque 😏) jamais vous-même.
+
+=== Exemple : +__init__+
+
+[source,python]
+----
+class Person:
+  def __init__(self, fullname: str):
+    self.fullname = fullname
+
+class Learner(Person):
+  def __init__(self, fullname: str, classes: list[str]):
+    super().__init__(fullname)
+    self.classes = classes
+----
+
+- operators and magic methods: https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+- operator precedence: https://docs.python.org/3/reference/expressions.html#operator-precedence

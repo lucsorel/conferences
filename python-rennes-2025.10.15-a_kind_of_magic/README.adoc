@@ -1,0 +1,34 @@
+= Documentation : trouver son style - jeudi 5 décembre 2024
+
+Export pdf des actualités : link:2025.10.15-a_kind_of_magic-quoi-de-noeuf.pdf[] (source : link:2025.10.15-a_kind_of_magic-quoi-de-noeuf.adoc[]).
+
+Présentations et personnes intervenantes :
+
+* **Florian Strzelecki** : Python et la magie du typage statique link:2025.10.15-Florian_Strzelecki-Documentation-Trouve_ton_style.pdf[].
+
+* **Luc Sorel-Giffo** : Découverte des méthodes magiques et des métaclasses pour construire une syntaxe de parcours de données link:2025.10.15-Luc_Sorel-Giffo-méthodes_magiques-métaclasses-DSL_données.pdf[] (source : link:2025.10.15-Luc_Sorel-Giffo-méthodes_magiques-métaclasses-DSL_données.adoc[]).
+
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=0CB4iVcHcsU
+image::assets/2025.10.15-python_documentation.png[width="50%",link="https://www.youtube.com/watch?v=0CB4iVcHcsU"]
+
+== Voir les diaporamas
+
+La présentation des actualités a été écrite pour être visualisée à travers l'extension https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides[flobilosaurus.vscode-asciidoc-slides] pour Codium / vsCode.
+
+. affichez la palette de commandes avec `ctrl shift p`
+. utilisez la commande `Asciidoc Slides: Open Slides in Browser`
+. appuyer sur `s` pour lancer le presenter mode
+
+Documentation de la https://docs.asciidoctor.org/reveal.js-converter/latest/converter/features/[syntaxe asciidoc pour les présentations].
+
+Pour générer un pdf :
+
+. utilisez la commande `Asciidoc Slides: Export document as PDF` (ne fonctionne pas toujours)
+
+ou :
+
+. ouvrir la présentation dans le navigateur chromium / chrome
+. rajouter `?print-pdf` à la fin de l'URL
+. lancer l'impression en pdf avec `ctrl p` ou `cmd p`
+
