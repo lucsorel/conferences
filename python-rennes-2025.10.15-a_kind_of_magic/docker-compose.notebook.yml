@@ -1,0 +1,14 @@
+services:
+  notebook:
+    container_name: notebook
+    build:
+      context: .
+      dockerfile: Dockerfile.marimo
+    volumes:
+      - ./notebook.py:/app/notebook.py
+      - ./.marimo.toml:/app/.marimo.toml
+      - ./assets:/app/public
+    ports:
+      - "8181:8181"
+    # environment:
+    #   BENCHMARK_SOURCES_CONFIG_FILE: 1_build_times/analysis_config.json
