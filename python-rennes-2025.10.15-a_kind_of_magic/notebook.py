@@ -2,15 +2,17 @@ import marimo
 
 __generated_with = "0.16.5"
 app = marimo.App(
-    width="medium",
+    width="columns",
     app_title="A kind of magic : méthodes spéciales, metaclasse, pattern matching",
+    layout_file="layouts/notebook.slides.json",
 )
 
 
 @app.cell(hide_code=True)
 def _():
     import marimo as mo
-    return (mo,)
+    import pytest
+    return mo, pytest
 
 
 @app.cell(hide_code=True)
@@ -155,16 +157,14 @@ def _(mo):
 @app.cell
 def _(data):
     # erreur d'index de liste
-    phone_numbers = data.get('friends')[0]
-    phone_numbers.get('phones')[1]
+    phone_number = data.get('friends')[0].get('phones')[1]
     return
 
 
 @app.cell
 def _(data):
     # erreur de clé de dictionnaire
-    friends = data.get('friends')
-    friends[2].get('phones')[0]
+    phone_number_2 = data.get('friends')[2].get('phones')[0]
     return
 
 
@@ -249,11 +249,11 @@ def _(mo):
     Une **méthode "spéciale"** :
     - a un nom en `__dunder__()`
     - n'est généralement pas appelé directement
-    - est appelée :
-      - par d'autres fonctions : `len(obj)` appelle `obj.__len__()`, `print(obj)`
-      - par des opérateurs : `obj + obj_2`, `ma_liste[::-1]`, `mon_dico['clé']`
-      - par des mécanismes :
-        - itération dans une boucle
+    - mais appelée "sous le capot" par :
+      - d'autres fonctions : `len(obj)` appelle `obj.__len__()`, `print(obj)`
+      - des opérateurs : `obj + obj_2`, `ma_liste[::-1]`, `mon_dico['clé']`
+      - des mécanismes internes :
+        - itération dans une boucle **for**
         - entrée / sortie de contextmanager
     """
     )
@@ -296,7 +296,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ### Choix de conception
+    ### Choix de conception pour `datawalk`
 
     - utiliser des opérateurs de même priorité pour exprimer un chemin de donnée sans devoir recourir à des parenthèses (lisibilité)
 
@@ -304,7 +304,7 @@ def _(mo):
 
     - utiliser un opérateur moins prioritaire pour appliquer la recherche de valeurs sur une structure de données
 
-    -> **priorité 7** : `|`, familiarité avec son utilisation dans les shells posix pour "piper" des données
+    -> **priorité 7** : `|`, familiarité avec son utilisation dans les shells unix pour "piper" des données
 
     ```python
     value = my_walk.walk(data)
@@ -317,7 +317,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Squelette de `datawalk.Walk`""")
+    mo.md(r"""## 🧪 TP : squelette de `datawalk.Walk`""")
     return
 
 
@@ -331,10 +331,23 @@ def _():
             self.data_state = data_state
 
     class Selector(Protocol):
-        def __call__(self, state: Any) -> Any: ... # sélectionne une valeur dans l'état donné
+        def __call__(self, state: Any) -> Any: ... # sélectionne une valeur dans la structure de données
         def __repr__(self) -> str: ... # affiche le comportement du sélecteur
 
-    class Walk:
+    class MetaWalk(type):
+        '''
+        Hériter de type fait de MetaWalk une metaclass
+        '''
+        def __truediv__(cls, step: Hashable) -> 'Walk':
+            return Walk(ByKey(step))
+
+        def __matmul__(cls, filter: tuple[Hashable, Hashable]) -> Any:
+            return Walk(First(*filter))
+
+        def __mod__(cls, filter: tuple[Hashable, Iterable]):
+            return Walk(All(filter))
+
+    class Walk(metaclass=MetaWalk):
         def __init__(self, *selectors: Selector):
             self.selectors = tuple(selectors)
 
@@ -350,7 +363,7 @@ def _():
                     passed_selectors.append(selector)
                 except Exception as error:
                     raise WalkError(
-                        f'walked {passed_selectors} but could not find {selector} in the current data state {current_state}',
+                        f'walked ({" ".join(str(selector) for selector in passed_selectors)}) of ({self}) but could not find {selector} in the current data state',
                         data_state=current_state,
                     ) from error
 
@@ -437,7 +450,7 @@ def _():
                 return f'[{self.key}]'
             else:
                 return f'.{self.key}'
-    return (Walk,)
+    return Walk, WalkError
 
 
 @app.cell(hide_code=True)
@@ -466,6 +479,31 @@ def _(Walk, data):
 
     def test_walk_object_attr_selector():
         assert (Walk() / 2 / 'type').walk(data['pets']) == 'bird'
+
+    return
+
+
+@app.cell
+def _(Walk, WalkError, data, pytest):
+    # messages d'erreur explicites
+    def test_walk_mismatching_steps_empty_list():
+        with pytest.raises(WalkError) as error:
+            phone_number = Walk() / 'friends' / 0 / 'phones' / 1 | data
+        walk_error = error.value
+        assert str(walk_error) == (
+            'walked (.friends [0] .phones) of (.friends [0] .phones [1]) but could not find [1] in the current data state'
+        )
+        assert walk_error.data_state == []
+
+    def test_walk_mismatching_steps_dict_without_key():
+        with pytest.raises(WalkError) as error:
+            phone_number = Walk() / 'friends' / 2 / 'phones' / 0 | data
+        walk_error = error.value
+        assert str(walk_error) == (
+            'walked (.friends [2]) of (.friends [2] .phones [0]) but could not find .phones in the current data state'
+        )
+        assert walk_error.data_state == {"name": "Suzie Q", "phone": "06 43 15 27 98"}
+
     return
 
 
@@ -654,7 +692,68 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## C'est dommage de commencer par une instance vide `Walk()` 🙁""")
+    mo.md(r"""## C'est dommage de commencer les chemins par une instance vide `Walk()` 🙁""")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    Tutoriel détaillé : https://realpython.com/python-metaclasses/
+
+    > Metaclasses are deeper magic than 99% of users should ever worry about.
+    > If you wonder whether you need them, you don’t (the people who actually need them know with certainty that they need them, and don’t need an explanation about why).
+
+        — Tim Peters (auteur du "zen of Python")
+
+    ```python
+    a_walk = Walk()
+    type(a_walk)                 # <class '__main__.Walk'> Walk est la classe de a_walk 
+    a_walk.__class__             # <class '__main__.Walk'>
+    type(a_walk.__class__)       # <class 'type'> type est la métaclasse de Walk
+    type(type(a_walk.__class__)) # <class 'type'> type est la métaclasse de type
+    ```
+    """
+    )
+    return
+
+
+@app.cell
+def _(Walk):
+    a_walk = Walk()
+    print('a_walk est une instance de', type(a_walk))
+    print('a_walk est une instance de', a_walk.__class__)
+    print(a_walk.__class__, 'est une instance de', type(a_walk.__class__))
+    print(type(a_walk.__class__), 'est une instance de', type(type(a_walk.__class__)))
+
+    # une classe est une instance de sa métaclasse
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    ```python
+    class MetaWalk(type):
+        '''
+        Hériter de type fait de MetaWalk une métaclasse
+        '''
+        def __truediv__(cls, step: Hashable) -> 'Walk':
+            return Walk(ByKey(step))
+
+        def __matmul__(cls, filter: tuple[Hashable, Hashable]) -> Any:
+            return Walk(First(*filter)) # ou return Walk() @ filter
+
+        def __mod__(cls, filter: tuple[Hashable, Iterable]):
+            return Walk(All(filter))    # ou return Walk() % filter
+
+    class Walk(metaclass=MetaWalk):
+        ...
+    ```
+    """
+    )
     return
 
 
@@ -745,6 +844,15 @@ def _(mo):
     mo.md(
         r"""
     Utiliser `datawalk` dans votre projet ? https://github.com/lucsorel/datawalk (-> ⭐ 🫶)
+
+    - concaténation de chemins
+
+    ```python
+    friends_walk = Walk / 'friends'
+    first_phone_walk = Walk / 'phones' / 0
+    friends_walk + first_phone_walk | data
+    ```
+
     - gère aussi les slices
 
     ```python
@@ -756,7 +864,9 @@ def _(mo):
     ```python
     first_lion_walk = Walk / 'pets' / @ ('type', 'lion') / 'name'
     first_lion_walk.walk(data, 'Léo')
+    # ou avec l'opérateur "^"
     first_lion_walk ^ (data, 'Léo')
+    ```
     """
     )
     return

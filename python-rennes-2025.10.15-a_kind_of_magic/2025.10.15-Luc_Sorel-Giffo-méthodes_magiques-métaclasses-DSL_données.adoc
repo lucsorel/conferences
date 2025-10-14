@@ -29,7 +29,6 @@ docker compose -f docker-compose.notebook.yml up
 # pour forcer la reconstruction de l'image docker (changement de dépendances, par ex.)
 docker compose -f docker-compose.notebook.yml up --build
 ----
-## Marimo
 
 == Documentation
 
@@ -38,6 +37,7 @@ Marimo :
 - https://docs.marimo.io/api/markdown/?h=image#rendering-images
 - https://docs.marimo.io/guides/configuration/runtime_configuration/
 - https://docs.marimo.io/guides/testing/pytest/
+- https://docs.marimo.io/api/caching/ (pas utilisé dans ce notebook)
 
 Python
 - https://docs.python.org/3/reference/datamodel.html#metaclasses
