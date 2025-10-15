@@ -334,9 +334,25 @@ def _():
         def __call__(self, state: Any) -> Any: ... # sélectionne une valeur dans la structure de données
         def __repr__(self) -> str: ... # affiche le comportement du sélecteur
 
-    class Walk:
+    class MetaWalk(type):
+        '''
+        Hériter de type fait de MetaWalk une metaclass
+        '''
+        def __truediv__(cls, step: Hashable) -> 'Walk':
+            return Walk(ByKey(step))
+
+        def __matmul__(cls, filter: tuple[Hashable, Hashable]) -> Any:
+            return Walk(First(*filter))
+
+        def __mod__(cls, filter: tuple[Hashable, Iterable]):
+            return Walk(All(filter))
+
+    class Walk(metaclass=MetaWalk):
         def __init__(self, *selectors: Selector):
             self.selectors = tuple(selectors)
+
+        def __truediv__(self, step: Hashable) -> 'Walk':
+            return Walk(*self.selectors, ByKey(step))
 
         def walk(self, data) -> Any:
             current_state = data
@@ -353,6 +369,83 @@ def _():
 
             return current_state
 
+        def __or__(self, data) -> Any:
+            return self.walk(data)
+
+        def __repr__(self) -> str:
+            return ' '.join(f'{selector}' for selector in self.selectors)
+
+        def __matmul__(self, filter: tuple[Hashable, Hashable]) -> Any:
+            """
+            >>> walk @ (key, value)
+            """
+            match filter:
+                case [key, value]:
+                    return Walk(*self.selectors, First(key, value))
+                case _:
+                    raise ValueError(f'unsupported filter: {filter}')
+
+        def __mod__(self, filter: tuple[Hashable, Iterable]):
+            """
+            >>> walk % (key, [values])
+            """
+            match filter:
+                case [key, [*values]]:
+                    return Walk(*self.selectors, All(key, values))
+
+                case [key, value]:
+                    raise ValueError(f'unsupported filter: {filter}, value {value} must be a sequence')
+
+                case _:
+                    raise ValueError(f'unsupported filter: {filter}')
+
+    class All:
+        def __init__(self, key: Hashable, values: Iterable):
+            self.key = key
+            self.values = values
+
+        def __call__(self, state: Iterable[dict | object]) -> list:
+            return [item for item in state if value_getter(item, self.key) in self.values]
+
+        def __repr__(self) -> str:
+            return f'%({self.key} in {self.values})'
+
+    _DEFAULT = object()
+    def value_getter(item: dict | object, key: Hashable):
+        if isinstance(item, dict):
+            return item.get(key, _DEFAULT)
+        else:
+            return getattr(item, key, _DEFAULT)
+
+    class First:
+        def __init__(self, key, value):
+            self.key = key
+            self.value = value
+
+        def __call__(self, state: list | tuple) -> Any:
+            return next(item for item in state if value_getter(item, self.key) == self.value)
+
+        def __repr__(self) -> str:
+            return f'@({self.key}=={self.value})'
+
+    class ByKey:
+        def __init__(self, key):
+            self.key = key
+
+        def __call__(self, state) -> Any:
+            match self.key, state:
+                case int(), _:
+                    return state[self.key]
+                case _, {self.key: value}:
+                    return value
+                case _, _:
+                    return getattr(state, self.key)
+
+        def __repr__(self) -> str:
+            if isinstance(self.key, int):
+                return f'[{self.key}]'
+            else:
+                return f'.{self.key}'
     return Walk, WalkError
 
 

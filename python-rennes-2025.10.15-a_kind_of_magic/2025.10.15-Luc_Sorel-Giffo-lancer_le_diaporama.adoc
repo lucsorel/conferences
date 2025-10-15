@@ -5,17 +5,7 @@
 :icons: font
 :toc:
 
-= Méthodes magiques, métaclasses, DSL de parcours de données
-
-== Découverte des méthodes magiques et des métaclasses pour construire une syntaxe de parcours de données
-
-image:assets/2025.10.15-python_rennes-a_kind_of_magic.png[bannière - a kind of magic,60%]
-
-[.medium-text]
-*Luc Sorel-Giffo* -- mercredi 15 octobre 2025 -- Hellowork
-
-[.small-text]
-https://floss.social/@lucsorelgiffo[@lucsorelgiffo@floss.social] (tech-lead full-stack chez https://www.seeyousun.fr[See you sun] 🌞⚡)
+= Méthodes magiques, pattern matching, métaclasses, DSL de parcours de données
 
 == Notebook
 
@@ -38,6 +28,9 @@ Marimo :
 - https://docs.marimo.io/guides/configuration/runtime_configuration/
 - https://docs.marimo.io/guides/testing/pytest/
 - https://docs.marimo.io/api/caching/ (pas utilisé dans ce notebook)
+
+Mermaidjs :
+- https://mermaid.js.org/syntax/flowchart.html
 
 Python
 - https://docs.python.org/3/reference/datamodel.html#metaclasses
