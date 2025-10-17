@@ -18,11 +18,19 @@ docker compose -f docker-compose.notebook.yml up
 
 # pour forcer la reconstruction de l'image docker (changement de dépendances, par ex.)
 docker compose -f docker-compose.notebook.yml up --build
+# ou
+docker compose -f docker-compose.notebook.yml build
 ----
+
+Vous pourrez ainsi accéder :
+
+- à l'état initial du TP: http://127.0.0.1:8181/
+- au TP corrigé: http://127.0.0.1:8181/?file=notebook-complete.py
 
 == Documentation
 
 Marimo :
+
 - https://docs.marimo.io/guides/deploying/deploying_docker/#deploy-with-docker
 - https://docs.marimo.io/api/markdown/?h=image#rendering-images
 - https://docs.marimo.io/guides/configuration/runtime_configuration/
@@ -30,7 +38,11 @@ Marimo :
 - https://docs.marimo.io/api/caching/ (pas utilisé dans ce notebook)
 
 Mermaidjs :
+
 - https://mermaid.js.org/syntax/flowchart.html
 
-Python
+Python :
+
+- https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+- https://docs.python.org/3/reference/expressions.html#operator-precedence
 - https://docs.python.org/3/reference/datamodel.html#metaclasses

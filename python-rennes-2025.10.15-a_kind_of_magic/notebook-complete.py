@@ -114,7 +114,7 @@ def _():
         ],
     }
     cinnamon, caramel, melody, socks = data['pets']
-    return caramel, cinnamon, data, socks
+    return caramel, cinnamon, data, melody, socks
 
 
 @app.cell
@@ -486,42 +486,6 @@ def _(Walk, data):
     return
 
 
-@app.cell
-def _(Walk, WalkError, data, pytest):
-    # messages d'erreur explicites
-    def test_walk_mismatching_steps_empty_list():
-        with pytest.raises(WalkError) as error:
-            phone_number = Walk() / 'friends' / 0 / 'phones' / 1 | data
-
-        walk_error = error.value
-        assert str(walk_error) == (
-            'walked (.friends [0] .phones) of (.friends [0] .phones [1]) but could not find [1] in the current data state'
-        )
-        assert walk_error.data_state == []
-
-    def test_walk_mismatching_steps_dict_without_key():
-        with pytest.raises(WalkError) as error:
-            phone_number = Walk() / 'friends' / 2 / 'phones' / 0 | data
-
-        walk_error = error.value
-        assert str(walk_error) == (
-            'walked (.friends [2]) of (.friends [2] .phones [0]) but could not find .phones in the current data state'
-        )
-        assert walk_error.data_state == {"name": "Suzie Q", "phone": "06 43 15 27 98"}
-
-    def test_walk_mismatching_steps_instance_without_attr():
-        with pytest.raises(WalkError) as error:
-            pet_weight = Walk() / 'pets' / 2 / 'weight' | data
-
-        walk_error = error.value
-        assert str(walk_error) == (
-            'walked (.pets [2]) of (.pets [2] .weight) but could not find .weight in the current data state'
-        )
-        assert str(walk_error.data_state) == 'Pet(name=Melody, type=bird)'
-
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
@@ -758,6 +722,41 @@ def _(Walk):
     return
 
 
+@app.cell
+def _(Walk, WalkError, data, pytest):
+    # messages d'erreur explicites
+    def test_walk_mismatching_steps_empty_list():
+        with pytest.raises(WalkError) as error:
+            phone_number = Walk() / 'friends' / 0 / 'phones' / 1 | data
+
+        walk_error = error.value
+        assert str(walk_error) == (
+            'walked (.friends [0] .phones) of (.friends [0] .phones [1]) but could not find [1] in the current data state'
+        )
+        assert walk_error.data_state == []
+
+    def test_walk_mismatching_steps_dict_without_key():
+        with pytest.raises(WalkError) as error:
+            phone_number = Walk() / 'friends' / 2 / 'phones' / 0 | data
+
+        walk_error = error.value
+        assert str(walk_error) == (
+            'walked (.friends [2]) of (.friends [2] .phones [0]) but could not find .phones in the current data state'
+        )
+        assert walk_error.data_state == {"name": "Suzie Q", "phone": "06 43 15 27 98"}
+
+    def test_walk_mismatching_steps_instance_without_attr():
+        with pytest.raises(WalkError) as error:
+            pet_weight = Walk() / 'pets' / 2 / 'weight' | data
+
+        walk_error = error.value
+        assert str(walk_error) == (
+            'walked (.pets [2]) of (.pets [2] .weight) but could not find .weight in the current data state'
+        )
+        assert str(walk_error.data_state) == 'Pet(name=Melody, type=bird)'
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
@@ -797,6 +796,19 @@ def _(mo):
     return
 
 
+@app.cell
+def _(Walk, caramel, data, melody):
+    def test_class_walk_by_keys():
+        assert Walk / 'pets' / 2 / 'name' | data == 'Melody'
+
+    def test_class_walk_filter_first():
+        assert Walk / 'pets' @ ('type', 'cat') / 'name' | data == 'Cinnamon'
+
+    def test_class_walk_filter_all():
+        assert Walk / 'pets' % ('type', ['bird', 'dog']) | data == [caramel, melody]
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
@@ -816,21 +828,21 @@ def _(mo):
             return Walk() / step
     ```
 
-    Les cas précédents ne fonctionnent plus :
+    Les cas précédents ne fonctionnent plus 😬
 
     ```python
     Walk() / 'name' | data
     # RecursionError: maximum recursion depth exceeded
     ```
 
-    La méthode de classe n'est pas appelée :
+    La méthode de classe n'est pas appelée 😢
 
     ```python
     Walk / 'name' | data
     # TypeError: unsupported operand type(s) for /: 'type' and 'str'
     ```
 
-    D'où vient ce "`type`" dans "_/ : unsupported operand between 'type' and 'str'_" ? 🤔
+    D'où vient ce "`type`" dans "_unsupported / operand between 'type' and 'str'_" ? 🤔
     """
     )
     return
@@ -843,12 +855,12 @@ def _(mo):
     ```python
     a_walk = Walk()
 
-    type(a_walk)                 # <class '__main__.Walk'>
-    a_walk.__class__             # <class '__main__.Walk'>
+    type(a_walk)              # <class '__main__.Walk'>
+    a_walk.__class__          # <class '__main__.Walk'>
 
-    type(a_walk.__class__)       # <class 'type'> type est la métaclasse de Walk
+    type(type(a_walk) )       # <class 'type'> type est la métaclasse de Walk
 
-    type(type(a_walk.__class__)) # <class 'type'> type est la métaclasse de type
+    type(type(type(a_walk) )) # <class 'type'> type est la métaclasse de type
     ```
     """
     )
@@ -863,10 +875,9 @@ def _(mo):
             a_walk -->|est une instance de| Walk
             Walk -->|est une instance de| type[type]
             type[type] -->|est une instance de| type[type]
-  
+
         """
     )
-
     return
 
 
@@ -927,6 +938,7 @@ def _(mo):
 @app.cell
 def _(Walk):
     a_walk = Walk()
+
     print(type(a_walk))
     print(type(type(a_walk)))
     print(type(type(type(a_walk))))
@@ -943,10 +955,9 @@ def _(mo):
             Walk -->|instance de| MetaWalk
             MetaWalk -->|instance de| type[type]
             type[type] -->|instance de| type[type]
-  
+
         """
     )
-
     return
 
 
@@ -998,9 +1009,9 @@ def _(mo):
     - 🥴 dissonance entre le nom des méthodes magiques et le rôle qu'on souhaite leur donner
     - **pattern matching structurel** : pour remplacer des conditions portant sur la structure des données
     - une classe est une **instance** de sa **métaclasse** (`type` par défaut)
-    - `@classmethod` émule une méthode de classe
+    - `@classmethod` "émule" une méthode de classe
       - n'ajoute pas une méthode de classe
-      - décorateur qui passe la classe de l'instance à la méthode décorée
+      - décorateur qui passe la classe de l'instance à la méthode décorée plutôt que "`self`"
     """
     )
     return
@@ -1047,6 +1058,50 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.md(
+        r"""
+    ## Alias de méthodes [ajout suite à une remarque lors de la présentation]
+
+    Suite à ma conclusion de _dissonance cognitive_ "ça fait bizarre d'implémenter des méthodes spéciales dont le nom ne re reflètent pas ce qu'elle fait", il m'a été suggéré l'approche suivante (faire des alias de méthodes) qui a 2 intérêts :
+
+    1. implémenter le comportement dans une méthode dont le nom reflète ce qu'elle fait
+    2. proposer le comportement par une API en plus de l'opérateur
+
+    ```python
+        class Walk(metaclass=MetaWalk):
+            ...
+            def filter_first(self, filter: tuple[Hashable, Hashable]) -> Any:
+                '''
+                Définition de l'API de la classe avec une méthode au nom porteur de sens
+                >>> walk.filter_first(key, value)
+                '''
+                match filter:
+                    case [key, value]:
+                        return Walk(*self.selectors, First(key, value))
+                    case _:
+                        raise ValueError(f'unsupported filter: {filter}')
+
+            # support de l'opérateur @ : walk @ (key, value)
+            __matmul__ = filter_first
+    ```
+
+    Avec cette modification, les tests automatisés suivants passent bien :
+
+    ```python
+    def test_walk_filter_first_with_api_method():
+        friends_walk = Walk() / 'friends'
+        assert friends_walk.filter_first(('name', 'Suzie Q')) / 'phone' | data == '06 43 15 27 98'
+
+    def test_walk_filter_first_operator():
+        assert Walk() / 'friends' @ ('name', 'Suzie Q') / 'phone' | data == '06 43 15 27 98'
+    ```
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""## 💙💛 squelette complet de `datawalk.Walk`""")
     return
 
@@ -1075,10 +1130,10 @@ def _(mo):
             return Walk(ByKey(step))
 
         def __matmul__(cls, filter: tuple[Hashable, Hashable]) -> Any:
-            return Walk(First(*filter))
+            return Walk() @ filter
 
         def __mod__(cls, filter: tuple[Hashable, Iterable]):
-            return Walk(All(filter))
+            return Walk() % filter
 
     class Walk(metaclass=MetaWalk):
         def __init__(self, *selectors: Selector):
