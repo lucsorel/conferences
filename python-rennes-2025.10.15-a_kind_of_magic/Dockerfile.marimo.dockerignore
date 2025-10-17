@@ -1,0 +1,5 @@
+# ignores everything and includes required files
+*
+!.marimo.toml
+!notebook.py
+!requirements.marimo.txt

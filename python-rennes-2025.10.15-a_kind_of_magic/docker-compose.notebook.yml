@@ -1,0 +1,14 @@
+services:
+  notebook:
+    container_name: notebook
+    build:
+      context: .
+      dockerfile: Dockerfile.marimo
+    image: notebook-a_kind_of_magic:marimo
+    volumes:
+      - ./notebook.py:/app/notebook.py
+      - ./notebook-complete.py:/app/notebook-complete.py
+      - ./.marimo.toml:/app/.marimo.toml
+      - ./assets:/app/public
+    ports:
+      - "8181:8181"

@@ -1,0 +1,17 @@
+= Python - a kind of magic - mercredi 15 octobre 2025
+
+Export pdf des actualités (compilées et présentées par Michel Caradec, merci !) : link:2025.10.15-a_kind_of_magic-quoi-de-noeuf.pdf[] .
+
+Présentations et personnes intervenantes :
+
+* **Florian Strzelecki** : Python et la magie du typage statique https://www.slideshare.net/slideshow/python-rennes-octobre-2025-les-types-c-est-magiques/283820697[www.slideshare.net/slideshow/python-rennes-octobre-2025-les-types-c-est-magiques/283820697].
+
+* **Luc Sorel-Giffo** : Découverte des méthodes magiques, du pattern matching structurel et des métaclasses pour construire une syntaxe de parcours de données
+** les explications pour lancer le diaporama (un notebook marimo) : link:2025.10.15-Luc_Sorel-Giffo-lancer_le_diaporama.adoc[]
+** le notebook marimo pour la présentation "live coding" : link:notebook.py[]
+** le notebook marimo corrigé : link:notebook-complete.py[]
+** un export markdown du diaporama : link:2025.10.15-Luc_Sorel-Giffo-a_kind_of_magic-méthodes_spéciales_metaclasse_pattern_matching.md[]
+** le projet `datawalk` https://github.com/lucsorel/datawalk qui permet d'intégrer la syntaxe de parcours de données dans vos projets
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=T5k616MqHCs (merci Alex !)
+image::assets/2025.10.15-python_rennes-a_kind_of_magic.png[width="50%",link="https://www.youtube.com/watch?v=T5k616MqHCs"]
