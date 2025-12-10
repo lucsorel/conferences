@@ -1,0 +1,12 @@
+= Python - a kind of magic - mercredi 15 octobre 2025
+
+Export pdf des actualités : link:2025.12.10-python-pere-noel-quoi_de_noeuf.pdf[]  (source : link:2025.12.10-python-pere-noel-quoi_de_noeuf.adoc[2025.12.10-python-pere-noel-quoi_de_noeuf.adoc]).
+
+Présentations et personnes intervenantes :
+
+* **Michel Caradec** : Python loin de ton ordinateur (diaporama : link:2025.12.10-Michel_Caradec-Python_away_from_your_computer.pdf[])
+* **Martin Guillon Verne** : Le composant gitlab python une ci/cd sur étagère (diaporama : https://gitlab.com/reech-oss/meetup/meetup-python-rennes-gitlab-python/-/blob/main/Meetup%20Python%20Rennes%20-%20Gitlab%20Python%20component.pdf)
+* **Frédéric Collonval** : IA on edge, une romance qui s'affirme (projet et diaporama : https://github.com/webscit/curious-frame)
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=Dzjjwhx2Amk (merci Alex !)
+image::assets/2025.12.10-python-pere-noel.png[width="50%",link="https://www.youtube.com/watch?v=Dzjjwhx2Amk"]
