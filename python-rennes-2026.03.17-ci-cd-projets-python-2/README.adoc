@@ -1,0 +1,10 @@
+= Optimiser son intégration continue de projet Python (mais pas que) - mardi 17 mars 2026
+
+Présentations et personnes intervenantes :
+
+* **Anthony Ricaud** : actualités https://www.youtube.com/watch?v=KKBBOGeRPJg&list=PLv7xGPH0RMUT1GSCGHJmqnswpk-nyz5aq[partie 1] et https://www.youtube.com/watch?v=KKBBOGeRPJg&list=PLv7xGPH0RMUT1GSCGHJmqnswpk-nyz5aq&t=3555s[partie 2]
+* **Luc Sorel-Giffo** : https://www.youtube.com/watch?v=KKBBOGeRPJg&list=PLv7xGPH0RMUT1GSCGHJmqnswpk-nyz5aq&t=578s[Automatiser une release avec Github actions : montée de version, publication sur PyPI] (diaporama : link:2026.03.17-ci-cd-projets-python-2.adoc[2026.03.17-ci-cd-projets-python-2.adoc], link:2026.03.17-ci-cd-projets-python-2.pdf[version pdf])
+* **Nicolas Ledez** : https://www.youtube.com/watch?v=KKBBOGeRPJg&list=PLv7xGPH0RMUT1GSCGHJmqnswpk-nyz5aq&t=4666s[Comment l’IA va vous aider à réduire votre impact carbone]
+
+.Rediffusion vidéo : https://www.youtube.com/watch?v=KKBBOGeRPJg (merci Alex !)
+image::assets/2026.03.17-ci-cd-projets-python-2.jpg[width="50%",link="https://www.youtube.com/watch?v=KKBBOGeRPJg&list=PLv7xGPH0RMUT1GSCGHJmqnswpk-nyz5aq"]
