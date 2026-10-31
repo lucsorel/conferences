@@ -1,18 +1,10 @@
 = Construire une logique métier avec des opérateurs mathématiques : méthodes spéciales & métaclasses
 
-:revealjs_customtheme: assets/beige-stylesheet.css
-:revealjs_progress: true
-:revealjs_slideNumber: true
-:source-highlighter: highlightjs
-:icons: font
-:toc:
-
-
 == Notebook
 
 * le notebook marimo pour la présentation "live coding" : link:notebook.py[]
 * le notebook marimo corrigé : link:notebook-complete.py[]
-* un export markdown du diaporama : link:2025.10.15-Luc_Sorel-Giffo-a_kind_of_magic-méthodes_spéciales_metaclasse_pattern_matching.md[]
+* un export markdown du diaporama : link:2026.11.01-Luc_Sorel-Giffo-a_kind_of_magic-méthodes_spéciales_metaclasse_pattern_matching.md[]
 * le projet `datawalk` https://github.com/lucsorel/datawalk qui permet d'intégrer la syntaxe de parcours de données dans vos projets
 
 Pour lancer le notebook :

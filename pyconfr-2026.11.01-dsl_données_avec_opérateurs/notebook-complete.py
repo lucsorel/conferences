@@ -4,6 +4,7 @@ __generated_with = "0.24.2"
 app = marimo.App(
     width="columns",
     app_title="Construire une logique métier avec des opérateurs",
+    layout_file="layouts/notebook-complete.slides.json",
 )
 
 
@@ -27,7 +28,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.mermaid(
         r"""
@@ -40,7 +41,8 @@ def _(mo):
       id{{Luc Sorel-Giffo}}
         💻
           tech-lead / formateur chez <a href='https://www.neosoft.fr/neosoft-rennes/'>Néosoft</a>
-          co-animation du meetup <a href='https://www.meetup.com/fr-FR/python-rennes/'>Python Rennes</a>
+          ex-tech-lead chez <a href='https://www.seeyousun.fr/'>SeeYouSun</a> 🌞⚡
+          <img src="public/python_rennes-fond_meetup.png" width="100%"">co-animation du meetup <a href='https://www.meetup.com/fr-FR/python-rennes/'>Python Rennes</a></img>
         🛠️ <a href='https://github.com/lucsorel/'>github.com/lucsorel</a> code-to-doc
           <a href='https://pypi.org/project/py2puml/'>pypi.org/project/py2puml</a>
           <a href='https://pypi.org/project/pydoctrace/'>pypi.org/project/pydoctrace</a>
@@ -59,11 +61,14 @@ def _(mo):
 
     Retour d'expérience sur l'élaboration d'une syntaxe de parcours de données : [github.com/lucsorel/datawalk](https://github.com/lucsorel/datawalk)
 
-    - découverte de sujets "bas niveau"
+    - découverte de sujets "avancés"
       - méthodes ~~magiques~~ spéciales
       - métaclasse et `@classmethod`
       - pattern matching structurel
     - détourer ces notions pour vous donner des idées
+    - "live-coding" dans marimo
+
+    🙋🏾 questions : clarification 👍, "ça vient", "à la fin"
     """)
     return
 
@@ -72,6 +77,11 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     ## Une mini-syntaxe de récupération de données - pourquoi ?
+
+    |   |   |
+    |---|---|
+    | <img src="public/ombrière.jpg" /> | <img src="public/ombrière-efforts.png"/> |
+
 
     Besoin : construire un rapport allant piocher des valeurs dans un dictionnaire très arborescent (~100 Mo).
 
@@ -264,7 +274,7 @@ def _(mo):
     - a un nom en `__dunder__()`
     - n'est généralement pas appelé directement
     - mais appelée "sous le capot" par :
-      - d'autres fonctions : `len(obj)` appelle `obj.__len__()`, `print(obj)`
+      - d'autres fonctions : `len(sequence)` appelle `sequence.__len__()`, `print(obj)`
       - des opérateurs : `obj + obj_2`, `ma_liste[::-1]`, `mon_dico['clé']`
       - des mécanismes internes :
         - itération dans une boucle **for**
@@ -445,10 +455,13 @@ def _():
 
         def __call__(self, state) -> Any:
             match self.key, state:
+                # clé de séquence ordonnée
                 case int(), _:
                     return state[self.key]
+                # clé de dictionnaire
                 case _, {self.key: value}:
                     return value
+                # attribut de classe
                 case _, _:
                     return getattr(state, self.key)
 
@@ -514,8 +527,10 @@ def _(mo):
             self.key = key
 
         def __call__(self, state) -> Any:
+            # récupération par une clé pour une séquence ou un dictionnaire
             if isinstance(self.key, int) or isinstance(state, dict):
                 return state[self.key]
+            # récupération par une propriété sinon
             else:
                 return getattr(state, self.key)
 
@@ -956,7 +971,19 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Version de `ByKey` avec du pattern matching structurel
+    ## Version de `ByKey.__call__()` avec du pattern matching structurel ?
+
+    ```python
+    class ByKey:
+        # ...
+        def __call__(self, state) -> Any:
+            # récupération par une clé pour une séquence ou un dictionnaire
+            if isinstance(self.key, int) or isinstance(state, dict):
+                return state[self.key]
+            # récupération par une propriété sinon
+            else:
+                return getattr(state, self.key)
+    ```
 
     Documentation sur le pattern matching :
     - PEP 636 qui en présente le formalisme et utilisations : https://peps.python.org/pep-0636/
@@ -989,19 +1016,25 @@ def _(mo):
     mo.md(r"""
     ## Conclusion
 
-    🙏 pour votre attention
+    Ça va, la tête 😬 ?
+    """)
+    return
 
-    Ça va la tête 😬 ?
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Bilan
 
     - 🧰 les méthodes spéciales permettent d'ajouter du comportement à des instances, déclenché par les opérateurs
     - ⚠️ attention aux priorités des opérateurs
-    - 🥴 pas d'autocomplétion par l'IDE sur les opérateurs mathématiques et les méthodes spéciales sous-jacentes
-    - 🥴 doc : dissonance entre le nom des méthodes magiques et le rôle qu'on souhaite leur donner
     - **pattern matching structurel** : pour remplacer des conditions portant sur la structure des données
     - une classe est une **instance** de sa **métaclasse** (`type` par défaut)
     - `@classmethod` "émule" une méthode de classe
       - n'ajoute pas une méthode de classe
-      - décorateur qui passe la classe de l'instance à la méthode décorée plutôt que "`self`"
+      - décorateur qui passe la classe de l'instance (`self.__class__`) à la méthode décorée plutôt que "`self`"
+    - 🥴 pas d'autocomplétion par l'IDE sur les opérateurs mathématiques et les méthodes spéciales sous-jacentes
+    - 🥴 incohérence : _nom de méthode spéciale_ `!=` _rôle métier surchargé_ (-> alias de méthodes)
     """)
     return
 
@@ -1009,30 +1042,17 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Utiliser `datawalk` dans votre projet ? https://github.com/lucsorel/datawalk (-> ⭐ 🫶)
+    ### Merci pour votre attention 🙏
 
-    - concaténation de chemins
+    🙋🏾Des questions ?
 
-    ```python
-    harry_walk = Walk / 'friends' @ ('name', 'Harry Cover')
-    phones_walk = Walk / 'phones'
-    harry_1st_phone = harry_walk + phones_walk / 0 | data
-    ```
+    Pour me faire vos retours (sur [openfeedback.io](https://openfeedback.io/pyconfr-2026-lucsorel-giffo/2026-11-01/MYxNUYIB2b0deaH2gmaA)) :
 
-    - gère aussi les slices
+    <img src="public/openfeedback-qrcode.svg" width="20%" style="display: block; margin-left: auto; margin-right: auto"></img>
 
-    ```python
-    Walk / 'pets' / slice(None, None, -1) # -> pets[::-1], inverse l'ordre
-    ```
+    Utiliser `datawalk` dans votre projet ? [pypi.org/project/datawalk](https://pypi.org/project/datawalk/)
 
-    - gère les valeurs par défaut
-
-    ```python
-    first_lion_walk = Walk / 'pets' / @ ('type', 'lion') / 'name'
-    first_lion_walk.walk(data, '🦁')
-    # ou avec l'opérateur "^"
-    first_lion_walk ^ (data, '🦁')
-    ```
+    Diaporama & notebook : [github.com/lucsorel/conferences/tree/main/pyconfr-2026.11.01-dsl_données_avec_opérateurs](https://github.com/lucsorel/conferences/tree/main/pyconfr-2026.11.01-dsl_donn%C3%A9es_avec_op%C3%A9rateurs)
     """)
     return
 
@@ -1040,7 +1060,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Si vous vouliez créer une syntaxe, ça serait pour manipuler quoi ?
+    ## Bonus
     """)
     return
 
@@ -1048,7 +1068,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Alias de méthodes [ajout suite à une remarque lors de la présentation]
+    ### Alias de méthodes
 
     Suite à ma conclusion de _dissonance cognitive_ "ça fait bizarre d'implémenter des méthodes spéciales dont le nom ne re reflètent pas ce qu'elle fait", il m'a été suggéré l'approche suivante (faire des alias de méthodes) qui a 2 intérêts :
 
@@ -1090,7 +1110,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## 💙💛 squelette complet de `datawalk.Walk`
+    ### 💙💛 squelette complet de `datawalk.Walk`
     """)
     return
 
@@ -1210,10 +1230,13 @@ def _(mo):
 
         def __call__(self, state) -> Any:
             match self.key, state:
+                # clé de séquence ordonnée
                 case int(), _:
                     return state[self.key]
+                # clé de dictionnaire
                 case _, {self.key: value}:
                     return value
+                # attribut de classe
                 case _, _:
                     return getattr(state, self.key)
 

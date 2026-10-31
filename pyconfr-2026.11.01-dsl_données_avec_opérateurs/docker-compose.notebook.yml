@@ -9,6 +9,7 @@ services:
       - ./notebook.py:/app/notebook.py
       - ./notebook-complete.py:/app/notebook-complete.py
       - ./.marimo.toml:/app/.marimo.toml
-      - ./assets:/app/public
+      - ./public:/app/public
+      - ./layouts:/app/layouts/
     ports:
       - "8181:8181"
