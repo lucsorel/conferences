@@ -1,0 +1,46 @@
+= Construire une logique métier avec des opérateurs mathématiques : méthodes spéciales & métaclasses
+
+== Notebook
+
+* le notebook marimo pour la présentation "live coding" : link:notebook.py[]
+* le notebook marimo corrigé : link:notebook-complete.py[]
+* un export markdown du diaporama : link:2026.11.01-Luc_Sorel-Giffo-a_kind_of_magic-méthodes_spéciales_metaclasse_pattern_matching.md[]
+* le projet `datawalk` https://github.com/lucsorel/datawalk qui permet d'intégrer la syntaxe de parcours de données dans vos projets
+
+Pour lancer le notebook :
+
+[source,shell]
+----
+cd pyconfr-2026.11.01-dsl_données_avec_opérateurs/
+docker compose -f docker-compose.notebook.yml up
+
+# pour forcer la reconstruction de l'image docker (changement de dépendances, par ex.)
+docker compose -f docker-compose.notebook.yml up --build
+# ou
+docker compose -f docker-compose.notebook.yml build
+----
+
+Vous pourrez ainsi accéder :
+
+- à l'état initial du TP: http://127.0.0.1:8181/
+- au TP corrigé: http://127.0.0.1:8181/?file=notebook-complete.py
+
+== Documentation
+
+Marimo :
+
+- https://docs.marimo.io/guides/deploying/deploying_docker/#deploy-with-docker
+- https://docs.marimo.io/api/markdown/?h=image#rendering-images
+- https://docs.marimo.io/guides/configuration/runtime_configuration/
+- https://docs.marimo.io/guides/testing/pytest/
+- https://docs.marimo.io/api/caching/ (pas utilisé dans ce notebook)
+
+Mermaidjs :
+
+- https://mermaid.js.org/syntax/flowchart.html
+
+Python :
+
+- https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+- https://docs.python.org/3/reference/expressions.html#operator-precedence
+- https://docs.python.org/3/reference/datamodel.html#metaclasses
